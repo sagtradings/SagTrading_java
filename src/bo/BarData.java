@@ -1,5 +1,8 @@
 package bo;
 
+/**
+ * BarData domain
+ */
 public class BarData {
 	public double getHigh() {
 		return high;
