@@ -3,11 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="63531173-6c32-42a1-b863-9020a8edf5d8" name="Default" comment="commit02">
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
     </list>
     <ignored path="SagTrading.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/Dummy.txt" changelist="63531173-6c32-42a1-b863-9020a8edf5d8" time="1369498841270" ignored="false" />
+    <file path="/Dummy.txt" changelist="63531173-6c32-42a1-b863-9020a8edf5d8" time="1369499001524" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -292,7 +291,15 @@
       <created>1369498859936</created>
       <updated>1369498859936</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="commit02">
+      <created>1369498998517</created>
+      <updated>1369498998517</updated>
+    </task>
+    <task id="LOCAL-00004" summary="commit02">
+      <created>1369499004572</created>
+      <updated>1369499004572</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TodoView" selected-index="3">
