@@ -1,7 +1,5 @@
 package listeners;
 
-import javax.swing.JOptionPane;
-
 import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.UpdateListener;
 
