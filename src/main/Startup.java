@@ -2,6 +2,11 @@ package main;
 
 import java.util.Calendar;
 
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.SimpleLayout;
+
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPServiceProviderManager;
 import com.espertech.esper.client.EPStatement;
@@ -22,7 +27,10 @@ public class Startup {
 	public static void main(String[] args){
 
 		System.out.println("helloxxxxyz");
-		
+	      SimpleLayout layout = new SimpleLayout();
+	      ConsoleAppender appender = new ConsoleAppender(new SimpleLayout());
+	      Logger.getRootLogger().addAppender(appender);
+	      Logger.getRootLogger().setLevel((Level) Level.WARN);
 		//String timerContext = "create context CtxEachSecond initiated  by pattern [every timer:interval(1 sec)] terminated after 5 minutes";
 		//String listenerStmt = "context CtxEachSecond select min(lastPrice) as minPrrice, max(lastPrice) as maxPrice from bo.MarketDataResponse group by instrumentId output snapshot every 1 seconds";
 		//String timerContext = "create context CtxEachSecond initiated  by pattern [every timer:interval(5 seconds)] terminated after 5 minutes";

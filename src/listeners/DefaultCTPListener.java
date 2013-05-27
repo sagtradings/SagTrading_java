@@ -26,13 +26,7 @@ public class DefaultCTPListener implements ICTPListener {
 	
 	@Override
 	public void onRspUserLogin() {
-		MarketDataResponse response = new MarketDataResponse();
-		//System.out.println("onRspUserLogin invoked");
-		EPServiceProvider epService = EPServiceProviderManager.getDefaultProvider();
-		EPRuntime runtime = epService.getEPRuntime();
-		 int d = (int)((System.currentTimeMillis() - initCal.getTimeInMillis()) / 1000.0);
-		 response.setUpdateMillisec(d);
-		runtime.sendEvent(response);
+
 		
 	}
 
@@ -68,8 +62,6 @@ public class DefaultCTPListener implements ICTPListener {
 
 	@Override
 	public void onRtnDepthMarketData(MarketDataResponse response) {
-		//System.out.println("time received: " + response.getTimeOfEvent() + " System.currentTimeMillis(): " + System.currentTimeMillis());
-		//System.out.println("time lag for event: " + (System.currentTimeMillis() - response.getTimeOfEvent()));
 		
 		double deltaAskPrice1 = (response.getLastPrice() - response.getAskPrice1());
 		double deltaBidPrice1 = response.getLastPrice() - response.getBidPrice1();
