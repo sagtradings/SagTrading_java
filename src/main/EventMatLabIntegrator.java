@@ -1,31 +1,15 @@
 package main;
 
-import javax.swing.JOptionPane;
-
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.SimpleLayout;
-
+import matlab.MatLabEvent;
+import matlab.MatLabEventListener;
 import threads.DLLIntegratorThread;
-
-import nativeinterfaces.DefaultNativeInterface;
+import bo.BarData;
 
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPServiceProviderManager;
 import com.espertech.esper.client.EPStatement;
 import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.UpdateListener;
-
-import listeners.BarDataManager;
-import listeners.DefaultCTPListener;
-import listeners.ICTPListener;
-import listeners.TestCTPListener;
-
-import matlab.MatLabEvent;
-import matlab.MatLabEventListener;
-import bo.BarData;
-import bo.MarketDataResponse;
 
 public class EventMatLabIntegrator {
 	

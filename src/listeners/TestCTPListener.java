@@ -12,13 +12,12 @@ import java.util.List;
 
 import javax.swing.Timer;
 
+import bo.MarketDataResponse;
+import bo.TradeDataResponse;
+
 import com.espertech.esper.client.EPRuntime;
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPServiceProviderManager;
-
-
-import bo.MarketDataResponse;
-import bo.TradeDataResponse;
 
 public class TestCTPListener implements ICTPListener{
 

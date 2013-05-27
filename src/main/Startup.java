@@ -1,21 +1,12 @@
 package main;
 
-import java.util.Calendar;
-
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.SimpleLayout;
+import listeners.BarDataManager;
+import listeners.DefaultCTPListener;
+import nativeinterfaces.DefaultNativeInterface;
 
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPServiceProviderManager;
 import com.espertech.esper.client.EPStatement;
-
-import nativeinterfaces.DefaultNativeInterface;
-import listeners.BarDataManager;
-import listeners.DefaultCTPListener;
-import listeners.ICTPListener;
-import listeners.TestCTPListener;
 
 public class Startup {
 	

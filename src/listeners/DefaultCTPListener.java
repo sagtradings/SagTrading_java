@@ -1,20 +1,13 @@
 package listeners;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import javax.swing.JOptionPane;
+import bo.MarketDataResponse;
+import bo.TradeDataResponse;
 
 import com.espertech.esper.client.EPRuntime;
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPServiceProviderManager;
-
-import bo.MarketDataResponse;
-import bo.TradeDataResponse;
 
 public class DefaultCTPListener implements ICTPListener {
 	private Calendar initCal = Calendar.getInstance();
