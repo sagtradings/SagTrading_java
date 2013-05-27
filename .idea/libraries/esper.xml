@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="esper">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/esper/commons-logging-1.1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/esper/cglib-nodep-2.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/esper/log4j-1.2.16.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/esper/antlr-runtime-3.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
