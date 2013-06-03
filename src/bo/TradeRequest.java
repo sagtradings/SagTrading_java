@@ -15,7 +15,7 @@ public class TradeRequest {
 	private String	timeCondition = "";
 	private String	gtdDate = "";
 	private String	volumeCondition = "";
-	private int	MinVolume ;
+	private int	minVolume ;
 	private String	contingentCondition = "";
 	private double	stopPrice;
 	private String	forceCloseReason = "";
@@ -115,10 +115,10 @@ public class TradeRequest {
 		this.volumeCondition = volumeCondition;
 	}
 	public int getMinVolume() {
-		return MinVolume;
+		return minVolume;
 	}
 	public void setMinVolume(int minVolume) {
-		MinVolume = minVolume;
+		minVolume = minVolume;
 	}
 	public String getContingentCondition() {
 		return contingentCondition;
