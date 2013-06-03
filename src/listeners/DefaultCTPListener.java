@@ -2,7 +2,9 @@ package listeners;
 
 import java.util.Calendar;
 
+import bo.ErrorResult;
 import bo.MarketDataResponse;
+import bo.OrderInsertResponse;
 import bo.TradeDataResponse;
 
 import com.espertech.esper.client.EPRuntime;
@@ -19,7 +21,7 @@ public class DefaultCTPListener implements ICTPListener {
 	
 	@Override
 	public void onRspUserLogin() {
-
+		System.out.println("logged in");
 		
 	}
 
@@ -42,13 +44,13 @@ public class DefaultCTPListener implements ICTPListener {
 	}
 
 	@Override
-	public void onRtnOrder() {
+	public void onRtnOrder(OrderInsertResponse response) {
 		System.out.println("onRtnOrder invoked");
 
 	}
 
 	@Override
-	public void onRspError() {
+	public void onRspError(ErrorResult errorRslt) {
 		System.out.println("OnRspError invoked");
 
 	}

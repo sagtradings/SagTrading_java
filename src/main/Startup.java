@@ -12,11 +12,14 @@ public class Startup {
 	
 	static{
 		System.loadLibrary("CTPDLL");
+
+		
 		System.out.println("library loaded");
 	}
 	
 	public static void main(String[] args){
-		
+		System.out.println(System.getProperty("java.library.path"));
+		System.out.println(System.getProperty("path"));
 		String timerContext = "create context CtxEachSecond initiated  by pattern [timer:interval(0) or every timer:interval(1 second)]  terminated after 1 seconds";
 		String listenerStmt = "context CtxEachSecond select instrumentId, first(lastPrice) as openPrice, lastPrice as closePrice, min(lastPrice) as minPrice, max(lastPrice) as maxPrice, sum(upVolume) as upVolume, sum(downVolume) as downVolume from bo.MarketDataResponse group by instrumentId  output last when terminated";
 		

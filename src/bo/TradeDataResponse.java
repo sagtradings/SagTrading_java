@@ -2,6 +2,35 @@ package bo;
 
 public class TradeDataResponse {
 	private String brokerID;;
+	private int brokerOrderSeq;
+	private String businessUnit;
+	private String clearingPartID;
+	private String clientID;
+	private String direction;
+	private String exchangeID;
+	private String exchangeInstID;
+	private String hedgeFlag;
+	private String instrumentID;
+	private String investorID;
+	private String offsetFlag;
+	private String orderLocalID;
+	private String orderRef;
+	private String orderSysID;
+	private String participantID;
+	private double price;
+	private String priceSource;
+	private int sequenceNo;
+	private int settlementID;
+	private String tradeDate;
+	private String tradeID;
+	private String traderID;
+	private String tradeSource;
+	private String tradeTime;
+	private String tradeType;
+	private String tradingDay;
+	private String tradingRole;
+	private String userID;
+	private int volume;
 	
 	public TradeDataResponse(){
 		
@@ -187,33 +216,5 @@ public class TradeDataResponse {
 	public void setVolume(int volume) {
 		this.volume = volume;
 	}
-	private int brokerOrderSeq;
-	private String businessUnit;
-	private String clearingPartID;
-	private String clientID;
-	private String direction;
-	private String exchangeID;
-	private String exchangeInstID;
-	private String hedgeFlag;
-	private String instrumentID;
-	private String investorID;
-	private String offsetFlag;
-	private String orderLocalID;
-	private String orderRef;
-	private String orderSysID;
-	private String participantID;
-	private double price;
-	private String priceSource;
-	private int sequenceNo;
-	private int settlementID;
-	private String tradeDate;
-	private String tradeID;
-	private String traderID;
-	private String tradeSource;
-	private String tradeTime;
-	private String tradeType;
-	private String tradingDay;
-	private String tradingRole;
-	private String userID;
-	private int volume;
+
 }
