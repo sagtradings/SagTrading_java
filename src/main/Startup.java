@@ -30,6 +30,19 @@ public class Startup {
 		DefaultCTPListener ctpListener = new DefaultCTPListener();
 		DefaultNativeInterface nativeInterface = new DefaultNativeInterface();
 		nativeInterface.subscribeListener(ctpListener);
-		nativeInterface.sendQuoteRequest(new String[]{});
+		String[] quote1 = {"IF1307"};
+		String[] quote2 = {"IF1309"};
+		//String[] quotes = {"IF1307", "IF1308", "IF1309"};
+		new DefaultNativeInterface().sendLoginMessage("1013", "123321", "00000008");
+		new DefaultNativeInterface().sendQuoteRequest(quote1);
+		
+		long currentTime = System.currentTimeMillis();
+		while(System.currentTimeMillis() - currentTime <= 5000);
+		new DefaultNativeInterface().sendQuoteRequest(quote2);
+		
+		currentTime = System.currentTimeMillis();
+		while(System.currentTimeMillis() - currentTime <= 5000);
+		new DefaultNativeInterface().sendUnsubscribeQuoteRequest(quote1);
+		System.out.println("exiting program");
 	}
 }

@@ -12,6 +12,6 @@ public class DefaultNativeInterface{
 	public native void sendOrderInsertMessage(String[] packet);
 	public native void sendReturnOrderMessage(String[] packet);
 	public native void sendQuoteRequest(String[] insturments);
-	public native void sendTradeRequest(String[] insturments);
+	public native void sendUnsubscribeQuoteRequest(String[] insturments);
 
 }

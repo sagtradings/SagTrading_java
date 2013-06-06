@@ -13,8 +13,10 @@ import java.util.List;
 import javax.swing.Timer;
 
 import bo.ErrorResult;
+import bo.LoginResponse;
 import bo.MarketDataResponse;
 import bo.OrderInsertResponse;
+import bo.SettlementResponse;
 import bo.TradeDataResponse;
 
 import com.espertech.esper.client.EPRuntime;
@@ -188,7 +190,7 @@ public class TestCTPListener implements ICTPListener{
 		
 	}
 	
-	public void onRspUserLogin() {
+	public void onRspUserLogin(LoginResponse loginResponse) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -233,6 +235,12 @@ public class TestCTPListener implements ICTPListener{
 
 	@Override
 	public void onRtnTradingData(TradeDataResponse response) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSettlementResponse(SettlementResponse response) {
 		// TODO Auto-generated method stub
 		
 	}

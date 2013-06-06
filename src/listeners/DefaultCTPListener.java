@@ -3,8 +3,10 @@ package listeners;
 import java.util.Calendar;
 
 import bo.ErrorResult;
+import bo.LoginResponse;
 import bo.MarketDataResponse;
 import bo.OrderInsertResponse;
+import bo.SettlementResponse;
 import bo.TradeDataResponse;
 
 import com.espertech.esper.client.EPRuntime;
@@ -20,7 +22,7 @@ public class DefaultCTPListener implements ICTPListener {
 	}
 	
 	@Override
-	public void onRspUserLogin() {
+	public void onRspUserLogin(LoginResponse loginResponse) {
 		System.out.println("logged in");
 		
 	}
@@ -80,6 +82,12 @@ public class DefaultCTPListener implements ICTPListener {
 	public void onRtnTradingData(TradeDataResponse response){
 		
 		System.out.println("onRtnTradingDataInvoked");
+	}
+
+	@Override
+	public void onSettlementResponse(SettlementResponse response) {
+		System.out.println("Settlement");
+		
 	}
 
 }

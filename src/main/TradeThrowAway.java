@@ -1,17 +1,20 @@
 package main;
 
+import threads.TradeIntegratorThread;
 import bo.TradeRequest;
 import listeners.DefaultCTPListener;
 import listeners.TradeListener;
 import nativeinterfaces.TradingNativeInterface;
 
 public class TradeThrowAway {
+
 	static{
 		System.loadLibrary("CTPTRADEDLL");
 		System.out.println("TRADEDLL LOADED");
 	}
+	
 	public static void main(String[] args){
-		TradingNativeInterface testInterface = new TradingNativeInterface();
+		//TradingNativeInterface testInterface = new TradingNativeInterface();
 		
 		
 
@@ -19,10 +22,11 @@ public class TradeThrowAway {
 		//const char  *userID = "00000008";
 		//const char  *password = "123321";
 		//const char  *brokerID = "1013";
-		testInterface.subscribeListener(new TradeListener());
-		testInterface.sendLoginMessage("1013", "123321", "00000008");
+		//new Thread(new TradeIntegratorThread("1013", "123321", "00000008")).start();
+		new TradingNativeInterface().subscribeListener(new TradeListener());
+		new TradingNativeInterface().sendLoginMessage("1013", "123321", "00000008");
 		TradeRequest request = new TradeRequest();
-		request.setDirection("1");
+		request.setDirection("0");
 		request.setOrderPriceType("2");
 		request.setCombOffsetFlag("0");
 		request.setCombHedgeFlag("1");
@@ -53,8 +57,9 @@ public class TradeThrowAway {
 		orderField.IsAutoSuspend = 0;
 		orderField.VolumeTotalOriginal = 10;
 		orderField.TimeCondition = THOST_FTDC_TC_GFD; */
+		//new TradingNativeInterface().sendSettlementReqest("1013", "00000008");
+		new TradingNativeInterface().sendTradeRequest("1013", "123321", "00000008", request);
 		
-		testInterface.sendTradeRequest("1013", "123321", "00000008", request);
 		//testInterface.sendOrderAction("1013", "123321", "00000008", null);
 	}
 }

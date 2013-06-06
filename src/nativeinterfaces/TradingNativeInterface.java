@@ -10,4 +10,5 @@ public class TradingNativeInterface {
 	public native void sendOrderAction(String brokerId, String password, String investorId, OrderActionRequest request);
 	public native void  subscribeListener(DefaultCTPListener obj);
     public native void unSubscribeListener(DefaultCTPListener obj);
+    public native void sendSettlementReqest(String brokerID, String userID);
 }
