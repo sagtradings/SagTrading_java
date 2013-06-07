@@ -1,10 +1,17 @@
 package main;
 
+import com.espertech.esper.client.EPServiceProvider;
+import com.espertech.esper.client.EPServiceProviderManager;
+import com.espertech.esper.client.EPStatement;
+
 import threads.TradeIntegratorThread;
 import bo.OrderActionRequest;
 import bo.TradeRequest;
 import listeners.DefaultCTPListener;
+import listeners.StopLossListener;
 import listeners.TradeListener;
+import listeners.TradeMarketDataListener;
+import nativeinterfaces.DefaultNativeInterface;
 import nativeinterfaces.TradingNativeInterface;
 
 public class TradeThrowAway {
@@ -12,6 +19,7 @@ public class TradeThrowAway {
 	static{
 		System.loadLibrary("CTPTRADEDLL");
 		System.out.println("TRADEDLL LOADED");
+		System.loadLibrary("CTPDLL");
 	}
 	
 	public static void main(String[] args){
@@ -25,40 +33,37 @@ public class TradeThrowAway {
 		//const char  *brokerID = "1013";
 		//new Thread(new TradeIntegratorThread("1013", "123321", "00000008")).start();
 		new TradingNativeInterface().subscribeListener(new TradeListener());
+		new DefaultNativeInterface().subscribeListener(new TradeMarketDataListener());
+		new DefaultNativeInterface().sendLoginMessage("1013", "123321", "00000008");
 		new TradingNativeInterface().sendLoginMessage("1013", "123321", "00000008");
-		TradeRequest request = new TradeRequest();
-		//request.setDirection("0");
-		request.setDirection("1");
-		request.setOrderPriceType("2");
-		request.setCombOffsetFlag("0");
-		request.setCombHedgeFlag("1");
-		request.setLimitPrice(2600);
-		request.setGtdDate("");
-		request.setVolumeCondition("1");
-		request.setMinVolume(1);
-		request.setContingentCondition("1");
-		request.setStopPrice(0);
-		request.setForceCloseReason("0");
-		request.setAutoSuspend(0);
-		request.setVolumeTotalOriginal(10);
-		request.setTimeCondition("3");
-		request.setInstrumentID("IF1307");
-		request.setOrderRef("00000000002");
 		
-		OrderActionRequest cancelRequest = new OrderActionRequest();
-		cancelRequest.setActionFlag("0");
-		cancelRequest.setBrokerID("1013");
-		cancelRequest.setExchangeID("");
-		cancelRequest.setFrontID(0);
-		cancelRequest.setInvestorID("00000008");
-		cancelRequest.setInstrumentID("IF1307");
-		cancelRequest.setLimitPrice(0);
-		cancelRequest.setOrderActionRef(0);
-		cancelRequest.setOrderRef("00000000002");
-		cancelRequest.setOrderSysID("");
-		cancelRequest.setRequestID(0);
-		cancelRequest.setSessionID(0);
-		cancelRequest.setUserID("1013");
+		String timerContext = "create context SegmentedByInstrument partition by  instrumentID from bo.TradeRequest, instrumentId from bo.MarketDataResponse";
+		String listenerStmt = "context SegmentedByInstrument select a.instrumentID, b.lastPrice from pattern[every a=bo.TradeRequest -> b=bo.MarketDataResponse(b.lastPrice <= a.limitPrice)]";
+		EPServiceProvider epService = EPServiceProviderManager.getDefaultProvider();
+		epService.getEPAdministrator().createEPL(timerContext);
+		EPStatement statement = epService.getEPAdministrator().createEPL(listenerStmt);
+		statement.addListener(new StopLossListener());
+		
+		TradeRequest initialRequest = new TradeRequest();
+		//request.setDirection("0");
+		initialRequest.setDirection("1");
+		initialRequest.setOrderPriceType("2");
+		initialRequest.setCombOffsetFlag("0");
+		initialRequest.setCombHedgeFlag("1");
+		initialRequest.setLimitPrice(2600);
+		initialRequest.setGtdDate("");
+		initialRequest.setVolumeCondition("1");
+		initialRequest.setMinVolume(1);
+		initialRequest.setContingentCondition("1");
+		initialRequest.setStopPrice(0);
+		initialRequest.setForceCloseReason("0");
+		initialRequest.setAutoSuspend(0);
+		initialRequest.setVolumeTotalOriginal(10);
+		initialRequest.setTimeCondition("3");
+		initialRequest.setInstrumentID("IF1307");
+		initialRequest.setOrderRef("00000000002");
+		
+
 		/*orderField.Direction = THOST_FTDC_D_Sell;
 		orderField.OrderPriceType = THOST_FTDC_OPT_LimitPrice;
 		//orderField.Direction = THOST_FTDC_D_Buy;
@@ -75,7 +80,7 @@ public class TradeThrowAway {
 		orderField.VolumeTotalOriginal = 10;
 		orderField.TimeCondition = THOST_FTDC_TC_GFD; */
 		//new TradingNativeInterface().sendSettlementReqest("1013", "00000008");
-		new TradingNativeInterface().sendTradeRequest("1013", "123321", "00000008", request);
+		new TradingNativeInterface().sendTradeRequest("1013", "123321", "00000008", initialRequest);
 		//new TradingNativeInterface().sendOrderAction("1013", "123321", "00000008", cancelRequest);
 		
 		//testInterface.sendOrderAction("1013", "123321", "00000008", null);

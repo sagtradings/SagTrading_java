@@ -15,6 +15,11 @@ public class OrderActionRequest {
 	private int	volumeChange;
 	private String	userID;
 	private String	instrumentID;
+	
+	public OrderActionRequest(){
+		
+	}
+	
 	public String getBrokerID() {
 		return brokerID;
 	}

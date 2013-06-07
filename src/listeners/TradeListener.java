@@ -1,5 +1,10 @@
 package listeners;
 
+import com.espertech.esper.client.EPRuntime;
+import com.espertech.esper.client.EPServiceProvider;
+import com.espertech.esper.client.EPServiceProviderManager;
+
+import nativeinterfaces.DefaultNativeInterface;
 import nativeinterfaces.TradingNativeInterface;
 import orderrepository.OrderBucket;
 import orderrepository.OrderRepository;
@@ -17,12 +22,17 @@ public class TradeListener extends DefaultCTPListener {
 		String instrument = response.getInstrumentID();
 		OrderRepository repository = OrderRepository.getInstance();
 		OrderBucket bucket = repository.getOrderBucket(instrument);
+		EPServiceProvider epService = EPServiceProviderManager.getDefaultProvider();
+		EPRuntime runtime = epService.getEPRuntime();
 		if(bucket.getOrderState() == OrderBucket.orderStates.INITIAL_REQUEST){
 			bucket.setOrderState(OrderBucket.orderStates.EXIT_REQUEST);
+			new DefaultNativeInterface().sendQuoteRequest(new String[]{instrument});
 			new TradingNativeInterface().sendTradeRequest("1013", "123321", "00000008", bucket.getExitRequest());
+			runtime.sendEvent(bucket.getExitRequest());
 		}
 		else if(bucket.getOrderState() == OrderBucket.orderStates.EXIT_REQUEST){
 			bucket.setOrderState(OrderBucket.orderStates.CYCLE_COMPLETED);
+			new DefaultNativeInterface().sendUnsubscribeQuoteRequest(new String[]{instrument});
 		}
 		
 	}
