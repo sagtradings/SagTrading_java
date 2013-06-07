@@ -3,6 +3,7 @@ package listeners;
 import bo.ErrorResult;
 import bo.LoginResponse;
 import bo.MarketDataResponse;
+import bo.OrderActionRequest;
 import bo.OrderInsertResponse;
 import bo.SettlementResponse;
 import bo.TradeDataResponse;
@@ -17,6 +18,7 @@ public interface ICTPListener {
 	public void onRtnDepthMarketData(MarketDataResponse response);
 	public void onRtnTradingData(TradeDataResponse response);
 	public void onSettlementResponse(SettlementResponse response);
+	public void onOrderActionResponse(OrderActionRequest initiatingAction);
 	
 	
 }

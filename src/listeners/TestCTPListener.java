@@ -15,6 +15,7 @@ import javax.swing.Timer;
 import bo.ErrorResult;
 import bo.LoginResponse;
 import bo.MarketDataResponse;
+import bo.OrderActionRequest;
 import bo.OrderInsertResponse;
 import bo.SettlementResponse;
 import bo.TradeDataResponse;
@@ -241,6 +242,12 @@ public class TestCTPListener implements ICTPListener{
 
 	@Override
 	public void onSettlementResponse(SettlementResponse response) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onOrderActionResponse(OrderActionRequest initiatingAction) {
 		// TODO Auto-generated method stub
 		
 	}

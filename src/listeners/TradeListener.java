@@ -5,6 +5,7 @@ import orderrepository.OrderBucket;
 import orderrepository.OrderRepository;
 import bo.ErrorResult;
 import bo.LoginResponse;
+import bo.OrderActionRequest;
 import bo.OrderInsertResponse;
 import bo.TradeDataResponse;
 
@@ -24,6 +25,11 @@ public class TradeListener extends DefaultCTPListener {
 			bucket.setOrderState(OrderBucket.orderStates.CYCLE_COMPLETED);
 		}
 		
+	}
+
+	@Override
+	public void onOrderActionResponse(OrderActionRequest initiatingAction) {
+		System.out.println("Order action");
 	}
 
 	@Override

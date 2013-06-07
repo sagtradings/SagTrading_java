@@ -5,6 +5,7 @@ import java.util.Calendar;
 import bo.ErrorResult;
 import bo.LoginResponse;
 import bo.MarketDataResponse;
+import bo.OrderActionRequest;
 import bo.OrderInsertResponse;
 import bo.SettlementResponse;
 import bo.TradeDataResponse;
@@ -87,6 +88,12 @@ public class DefaultCTPListener implements ICTPListener {
 	@Override
 	public void onSettlementResponse(SettlementResponse response) {
 		System.out.println("Settlement");
+		
+	}
+
+	@Override
+	public void onOrderActionResponse(OrderActionRequest initiatingAction) {
+		// TODO Auto-generated method stub
 		
 	}
 
