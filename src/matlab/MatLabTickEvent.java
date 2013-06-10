@@ -16,65 +16,6 @@ public class MatLabTickEvent extends java.util.EventObject{
 	}
 	private MarketDataResponse delegate;
 	
-	private String actionDay;
-	private double askPrice1;
-	private double askPrice2;
-	private double askPrice3;
-	private double askPrice4;
-	private double askPrice5;
-	
-	private int askVolume1;
-	private int askVolume2;
-	private int askVolume3;
-	private int askVolume4;
-	private int askVolume5;
-	
-	private double averagePrice;
-	
-	private double bidPrice1;
-	private double bidPrice2;
-	private double bidPrice3;
-	private double bidPrice4;
-	private double bidPrice5;
-	
-	private int bidVolume1;
-	private int bidVolume2;
-	private int bidVolume3;
-	private int bidVolume4;
-	private int bidVolume5;
-
-	private double closePrice;
-
-	private double currDelta;
-	private String exchangeID;
-	
-	private String exchangeInstId;
-	private double highestPrice;
-	private String instrumentId;
-	
-	private double lastPrice;
-	private double lowerLimitPrice;
-	private double lowestPrice;
-	private double openInterest;
-	private double openPrice;
-	private double preClosePrice;
-	private double preDelta;
-	private double preOpenInterest;
-	private double preSettlementPrice;
-	private double settlementPrice;
-	private String tradingDay;
-	private double turnOver;
-	private int updateMillisec;
-	private String updateTime;
-	private double upperLimitPrice;
-	
-	private long timeOfEvent;
-	
-	private int volume;
-	
-	private double upVolume;
-	private double downVolume;
-
 	public String getActionDay() {
 		return delegate.getActionDay();
 	}

@@ -3,8 +3,7 @@ package matlab;
 import bo.ErrorResult;
 
 public class MatLabOnRtnErrorEvent extends java.util.EventObject{
-	private int errorId;
-	private String errorMessage;
+
 	
 	private ErrorResult delegate;
 	
