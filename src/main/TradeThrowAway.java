@@ -37,7 +37,7 @@ public class TradeThrowAway {
 		new TradingNativeInterface().sendLoginMessage("1013", "123321", "00000008");
 		
 		String timerContext = "create context SegmentedByInstrument partition by  instrumentID from bo.TradeRequest, instrumentId from bo.MarketDataResponse";
-		String listenerStmt = "context SegmentedByInstrument select a.instrumentID, b.lastPrice from pattern[every a=bo.TradeRequest -> b=bo.MarketDataResponse(b.lastPrice <= a.limitPrice)]";
+		String listenerStmt = "context SegmentedByInstrument select a.instrumentID, b.lastPrice from pattern[every a=bo.TradeRequest -> b=bo.MarketDataResponse(b.lastPrice <= a.cutOffPrice)]";
 		EPServiceProvider epService = EPServiceProviderManager.getDefaultProvider();
 		epService.getEPAdministrator().createEPL(timerContext);
 		EPStatement statement = epService.getEPAdministrator().createEPL(listenerStmt);

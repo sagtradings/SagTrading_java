@@ -1,19 +1,19 @@
 package main;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import nativeinterfaces.MarketDataNativeInterface;
 import listeners.DefaultCTPListener;
 import matlab.MatLabEvent;
 import matlab.MatLabEventListener;
 import matlab.MatLabTickEvent;
-import threads.DLLIntegratorThread;
+import bardatamanager.BarDataManager;
+import bardatamanager.EntryNotInitializedException;
 import bo.BarData;
 import bo.MarketDataResponse;
 
-import com.espertech.esper.client.EPServiceProvider;
-import com.espertech.esper.client.EPServiceProviderManager;
-import com.espertech.esper.client.EPStatement;
-import com.espertech.esper.client.EventBean;
-import com.espertech.esper.client.UpdateListener;
 
 public class EventMatLabIntegrator {
 	
@@ -30,57 +30,65 @@ public class EventMatLabIntegrator {
 	
 	private class ICMDListener extends DefaultCTPListener{
 
-		@Override
+		private SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHH:mm:ss");
+		private long startTime = System.currentTimeMillis();
 		public void onRtnDepthMarketData(MarketDataResponse response) {
+
+			double deltaAskPrice1 = (response.getLastPrice() - response.getAskPrice1());
+			double deltaBidPrice1 = response.getLastPrice() - response.getBidPrice1();
+			if(Math.abs(deltaAskPrice1) < deltaBidPrice1){
+				response.setUpVolume(response.getVolume());
+			}
+			else{
+				response.setDownVolume(response.getVolume());
+			}
+			try {
+				Date updateTime = formatter.parse(response.getTradingDay() + response.getUpdateTime());
+				response.setMillisecConversionTime(updateTime.getTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			//BarDataManager.
+			bardatamanager.BarDataManager barManager = bardatamanager.BarDataManager.getInstance();
+			try {
+				BarData compiledData = barManager.sendMarketData(response);
+				if(compiledData != null){
+					long elapsedTime = System.currentTimeMillis() - startTime;
+					System.out.println("got marketData");
+					System.out.println("Open: " + compiledData.getOpen() + " Close: " + compiledData.getClose() + " Low: " + compiledData.getLow() + " High: " + compiledData.getHigh() + " UpVolume: " + compiledData.getUpVolume() + " DownVolume: " + compiledData.getDownVolume());
+					System.out.println("elapsed time: " + elapsedTime);
+					startTime = System.currentTimeMillis();
+					notifyMatLabBarData(compiledData);
+				}
+			} catch (EntryNotInitializedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			notifyMatLabLabTickEvent(response);
 		}
 		
 	}
 	
 	public void initialize(){
-		String timerContext = "create context CtxEachSecond initiated  by pattern [timer:interval(0) or every timer:interval(1 second)]  terminated after 1 seconds";
-		String listenerStmt = "context CtxEachSecond select instrumentId, first(lastPrice) as openPrice, lastPrice as closePrice, min(lastPrice) as minPrice, max(lastPrice) as maxPrice, sum(upVolume) as upVolume, sum(downVolume) as downVolume from bo.MarketDataResponse group by instrumentId  output last when terminated";
-		EPServiceProvider epService = EPServiceProviderManager.getDefaultProvider();
-		epService.getEPAdministrator().createEPL(timerContext);
-		EPStatement statement = epService.getEPAdministrator().createEPL(listenerStmt);
-		//statement.addListener(new ICBarDataManager());
-		//new Thread(new DLLIntegratorThread()).start();
-		//DefaultCTPListener ctpListener = new DefaultCTPListener();
 		MarketDataNativeInterface nativeInterface = new MarketDataNativeInterface();
 		nativeInterface.subscribeListener(new ICMDListener());
-		//new DefaultNativeInterface().sendLoginMessage("1013", "123321", "00000008");
-		//nativeInterface.sendQuoteRequest(new String[]{"IF1307"});
 	}
 	
 	public void subscribeMarketData(String instrument){
 		new MarketDataNativeInterface().sendQuoteRequest(new String[]{instrument});
 	}
 	
-	public void requestLogin(String brokerId, String password, String investorId){
-		new MarketDataNativeInterface().sendLoginMessage(brokerId, password, investorId);
+	public void subscribeBarData(String instrument, long barLength){
+		BarDataManager.getInstance().initializeEntry(instrument, barLength);
+		subscribeMarketData(instrument);
 	}
 	
-	private class ICBarDataManager implements UpdateListener{
-
-		@Override
-		public void update(EventBean[] arg0, EventBean[] arg1) {
-			
-			 
-			for(int k = 0, n = arg0.length; k < n; k++){
-				BarData barData = new BarData();
-				barData.setClose((Double) arg0[k].get("closePrice"));
-				barData.setDownVolume((Double) arg0[k].get("downVolume"));
-				barData.setHigh((Double) arg0[k].get("maxPrice"));
-				barData.setLow((Double) arg0[k].get("minPrice"));
-				barData.setOpen((Double) arg0[k].get("openPrice"));
-				barData.setUpVolume((Double) arg0[k].get("upVolume"));
-				notifyMatLabBarData(barData);
-			}
-			
-			
-		}
+	public void requestLogin(String brokerId, String password, String investorId){
+		new MarketDataNativeInterface().sendLoginMessage(brokerId, password, investorId);
 		
 	}
+
 	
 	
 	
