@@ -135,7 +135,7 @@ public class TradeRequest {
 		return minVolume;
 	}
 	public void setMinVolume(int minVolume) {
-		minVolume = minVolume;
+		this.minVolume = minVolume;
 	}
 	public String getContingentCondition() {
 		return contingentCondition;

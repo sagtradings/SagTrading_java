@@ -18,7 +18,7 @@ public class OrderActionRequest {
 	private String	instrumentID;
 	
 	public OrderActionRequest(){
-		this.creationTimeStamp = creationTimeStamp;
+		this.creationTimeStamp = System.currentTimeMillis();
 	}
 	
 	public long getCreationTimeStamp() {
