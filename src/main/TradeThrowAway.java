@@ -1,17 +1,15 @@
 package main;
 
-import com.espertech.esper.client.EPServiceProvider;
-import com.espertech.esper.client.EPServiceProviderManager;
-import com.espertech.esper.client.EPStatement;
-
-import bo.OrderActionRequest;
-import bo.TradeRequest;
-import listeners.DefaultCTPListener;
 import listeners.StopLossListener;
 import listeners.TradeListener;
 import listeners.TradeMarketDataListener;
 import nativeinterfaces.MarketDataNativeInterface;
 import nativeinterfaces.TradingNativeInterface;
+import bo.TradeRequest;
+
+import com.espertech.esper.client.EPServiceProvider;
+import com.espertech.esper.client.EPServiceProviderManager;
+import com.espertech.esper.client.EPStatement;
 
 public class TradeThrowAway {
 

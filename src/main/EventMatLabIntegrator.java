@@ -4,11 +4,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import nativeinterfaces.MarketDataNativeInterface;
 import listeners.DefaultCTPListener;
 import matlab.MatLabEvent;
 import matlab.MatLabEventListener;
 import matlab.MatLabTickEvent;
+import nativeinterfaces.MarketDataNativeInterface;
 import bardatamanager.BarDataManager;
 import bardatamanager.EntryNotInitializedException;
 import bo.BarData;

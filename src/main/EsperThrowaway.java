@@ -1,9 +1,5 @@
 package main;
 
-import listeners.BarDataManager;
-import listeners.DefaultCTPListener;
-import nativeinterfaces.MarketDataNativeInterface;
-
 import bo.MarketDataResponse;
 
 import com.espertech.esper.client.EPRuntime;
@@ -44,7 +40,7 @@ public class EsperThrowaway {
 
 		EPRuntime runtime = epService.getEPRuntime();
 		double i = 0;
-		int x = 0;
+		
 		while(true){
 			MarketDataResponse event = new MarketDataResponse();
 			MarketDataResponse event2 = new MarketDataResponse();
@@ -55,7 +51,7 @@ public class EsperThrowaway {
 			event2.setLastPrice(i + 1);
 			runtime.sendEvent(event);
 			runtime.sendEvent(event2);
-			x++;
+			
 			Thread.sleep(1000);
 		}
 		

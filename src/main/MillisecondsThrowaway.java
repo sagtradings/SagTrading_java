@@ -8,7 +8,6 @@ public class MillisecondsThrowaway {
 		long startTime = System.currentTimeMillis();
 		startTime = (startTime + (long)(startTime % 86400000L));
 		startTime = startTime - (System.currentTimeMillis() % (24L * 60*60*1000));
-		long yesterday = startTime - 86400000;
 		
 		Calendar c = Calendar.getInstance();
 		System.out.println(c.getTime().toString());
