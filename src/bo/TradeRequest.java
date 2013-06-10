@@ -25,6 +25,7 @@ public class TradeRequest {
 	private int	userForceClose;
 	private int	swapOrder;
 	private double cutOffPrice;
+	private long creationTimeStamp;
 	
 	public double getCutOffPrice() {
 		return cutOffPrice;
@@ -37,10 +38,15 @@ public class TradeRequest {
 
 
 	public TradeRequest(){
-		
+		this.creationTimeStamp = System.currentTimeMillis();
 	}
 	
 	
+	public long getCreationTimeStamp() {
+		return creationTimeStamp;
+	}
+
+
 	public String getBrokerID() {
 		return brokerID;
 	}

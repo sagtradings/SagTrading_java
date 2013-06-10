@@ -5,7 +5,13 @@ public class SettlementResponse {
 	private String investorID;
 	private String confirmDate;
 	private String confirmTime;
-	public SettlementResponse(){}
+	private long creationTimeStamp;
+	public SettlementResponse(){
+		this.creationTimeStamp = System.currentTimeMillis();
+	}
+	public long getCreationTimeStamp() {
+		return creationTimeStamp;
+	}
 	public String getBrokerID() {
 		return brokerID;
 	}

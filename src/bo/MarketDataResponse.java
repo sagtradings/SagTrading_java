@@ -2,6 +2,7 @@ package bo;
 
 public class MarketDataResponse {
 	
+	
 	private String actionDay;
 	private double askPrice1;
 	private double askPrice2;
@@ -54,7 +55,7 @@ public class MarketDataResponse {
 	private String updateTime;
 	private double upperLimitPrice;
 	
-	private long timeOfEvent;
+	private long creationTimeStamp;
 	private long millisecConversionTime;
 	
 	public long getMillisecConversionTime() {
@@ -70,12 +71,12 @@ public class MarketDataResponse {
 	private double upVolume;
 	private double downVolume;
 	
-	public long getTimeOfEvent() {
-		return timeOfEvent;
+	public long getCreationTimeStamp() {
+		return creationTimeStamp;
 	}
 
-	public void setTimeOfEvent(long timeOfEvent) {
-		this.timeOfEvent = timeOfEvent;
+	public void setCreationTimeStamp(long creationTimeStamp) {
+		this.creationTimeStamp = creationTimeStamp;
 	}
 
 
@@ -97,7 +98,7 @@ public class MarketDataResponse {
 	}
 
 	public MarketDataResponse(){
-		this.timeOfEvent = System.currentTimeMillis();
+		this.creationTimeStamp = System.currentTimeMillis();
 	}
 	
 	public String getActionDay() {

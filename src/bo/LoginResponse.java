@@ -2,9 +2,15 @@ package bo;
 
 public class LoginResponse {
 	private int maxOrder;
-
-	public LoginResponse(){}
+	private long creationTimeStamp;
+	public LoginResponse(){
+		this.creationTimeStamp = System.currentTimeMillis();
+	}
 	
+	public long getCreationTimeStamp() {
+		return creationTimeStamp;
+	}
+
 	public int getMaxOrder() {
 		return maxOrder;
 	}

@@ -1,6 +1,10 @@
 package bo;
 
 public class TradeDataResponse {
+	private long creationTimeStamp;
+	public long getCreationTimeStamp() {
+		return creationTimeStamp;
+	}
 	private String brokerID;;
 	private int brokerOrderSeq;
 	private String businessUnit;
@@ -33,7 +37,7 @@ public class TradeDataResponse {
 	private int volume;
 	
 	public TradeDataResponse(){
-		
+		this.creationTimeStamp = System.currentTimeMillis();
 	}
 	
 	public String getBrokerID() {

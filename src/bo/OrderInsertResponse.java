@@ -58,11 +58,16 @@ public class OrderInsertResponse {
 	private String	relativeOrderSysID;
 	private int	zceTotalTradedVolume;
 	private int	swapOrder;
+	private long creationTimeStamp;
 	
 	public OrderInsertResponse(){
-		
+		this.creationTimeStamp = System.currentTimeMillis();
 	}
 	
+	public long getCreationTimeStamp() {
+		return creationTimeStamp;
+	}
+
 	public String getBrokerID() {
 		return brokerID;
 	}

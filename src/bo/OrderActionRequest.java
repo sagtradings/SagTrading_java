@@ -1,6 +1,7 @@
 package bo;
 
 public class OrderActionRequest {
+	private long creationTimeStamp;
 	private String	brokerID;
 	private String	investorID;
 	private int	orderActionRef;
@@ -17,9 +18,13 @@ public class OrderActionRequest {
 	private String	instrumentID;
 	
 	public OrderActionRequest(){
-		
+		this.creationTimeStamp = creationTimeStamp;
 	}
 	
+	public long getCreationTimeStamp() {
+		return creationTimeStamp;
+	}
+
 	public String getBrokerID() {
 		return brokerID;
 	}

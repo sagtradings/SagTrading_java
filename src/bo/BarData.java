@@ -33,6 +33,15 @@ public class BarData {
 	private double open;
 	private double close;
 	private double upVolume;
+	public long getCreationTimeStamp() {
+		return creationTimeStamp;
+	}
+	private long creationTimeStamp;
+	
+	public BarData(){
+		this.creationTimeStamp = System.currentTimeMillis();
+	}
+	
 	public double getUpVolume() {
 		return upVolume;
 	}

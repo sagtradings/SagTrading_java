@@ -1,6 +1,10 @@
 package bo;
 
 public class TradeInsertResponse {
+	private long creationTimeStamp;
+	public long getCreationTimeStamp() {
+		return creationTimeStamp;
+	}
 	private String	brokerID;
 	private String	investorID;
 	private String	instrumentID;
@@ -31,6 +35,11 @@ public class TradeInsertResponse {
 	private int	settlementID;
 	private int	brokerOrderSeq;
 	private String	tradeSource;
+	
+	public TradeInsertResponse(){
+		this.creationTimeStamp = System.currentTimeMillis();
+	}
+	
 	public String getBrokerID() {
 		return brokerID;
 	}

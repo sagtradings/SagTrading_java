@@ -1,6 +1,7 @@
 package bo;
 
 public class ErrorResult {
+	private long creationTimeStamp;
 	public int getErrorId() {
 		return errorId;
 	}
@@ -21,6 +22,10 @@ public class ErrorResult {
 	}
 
 	public ErrorResult(){
-		
+		this.creationTimeStamp = System.currentTimeMillis();
+	}
+
+	public long getCreationTimeStamp() {
+		return creationTimeStamp;
 	}
 }
