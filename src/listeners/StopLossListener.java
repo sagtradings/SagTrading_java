@@ -1,6 +1,6 @@
 package listeners;
 
-import nativeinterfaces.DefaultNativeInterface;
+import nativeinterfaces.MarketDataNativeInterface;
 import nativeinterfaces.TradingNativeInterface;
 import orderrepository.OrderBucket;
 import orderrepository.OrderRepository;
@@ -36,9 +36,9 @@ public class StopLossListener implements UpdateListener {
 			cancelRequest.setSessionID(0);
 			cancelRequest.setUserID("1013");
 			
-			//new TradingNativeInterface().sendTradeRequest("1013", "123321", "00000008", bucket.getStopLossRequest());
+			new TradingNativeInterface().sendTradeRequest("1013", "123321", "00000008", bucket.getStopLossRequest());
 			new TradingNativeInterface().sendOrderAction("1013", "123321", "00000008", cancelRequest);
-			new DefaultNativeInterface().sendUnsubscribeQuoteRequest(new String[] {instrument});
+			new MarketDataNativeInterface().sendUnsubscribeQuoteRequest(new String[] {instrument});
 		}
 
 	}

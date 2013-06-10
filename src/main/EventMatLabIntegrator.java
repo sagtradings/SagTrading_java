@@ -1,9 +1,13 @@
 package main;
 
+import nativeinterfaces.MarketDataNativeInterface;
+import listeners.DefaultCTPListener;
 import matlab.MatLabEvent;
 import matlab.MatLabEventListener;
+import matlab.MatLabTickEvent;
 import threads.DLLIntegratorThread;
 import bo.BarData;
+import bo.MarketDataResponse;
 
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPServiceProviderManager;
@@ -24,14 +28,36 @@ public class EventMatLabIntegrator {
 
 	}
 	
+	private class ICMDListener extends DefaultCTPListener{
+
+		@Override
+		public void onRtnDepthMarketData(MarketDataResponse response) {
+			notifyMatLabLabTickEvent(response);
+		}
+		
+	}
+	
 	public void initialize(){
 		String timerContext = "create context CtxEachSecond initiated  by pattern [timer:interval(0) or every timer:interval(1 second)]  terminated after 1 seconds";
 		String listenerStmt = "context CtxEachSecond select instrumentId, first(lastPrice) as openPrice, lastPrice as closePrice, min(lastPrice) as minPrice, max(lastPrice) as maxPrice, sum(upVolume) as upVolume, sum(downVolume) as downVolume from bo.MarketDataResponse group by instrumentId  output last when terminated";
 		EPServiceProvider epService = EPServiceProviderManager.getDefaultProvider();
 		epService.getEPAdministrator().createEPL(timerContext);
 		EPStatement statement = epService.getEPAdministrator().createEPL(listenerStmt);
-		statement.addListener(new ICBarDataManager());
-		new Thread(new DLLIntegratorThread()).start();
+		//statement.addListener(new ICBarDataManager());
+		//new Thread(new DLLIntegratorThread()).start();
+		//DefaultCTPListener ctpListener = new DefaultCTPListener();
+		MarketDataNativeInterface nativeInterface = new MarketDataNativeInterface();
+		nativeInterface.subscribeListener(new ICMDListener());
+		//new DefaultNativeInterface().sendLoginMessage("1013", "123321", "00000008");
+		//nativeInterface.sendQuoteRequest(new String[]{"IF1307"});
+	}
+	
+	public void subscribeMarketData(String instrument){
+		new MarketDataNativeInterface().sendQuoteRequest(new String[]{instrument});
+	}
+	
+	public void requestLogin(String brokerId, String password, String investorId){
+		new MarketDataNativeInterface().sendLoginMessage(brokerId, password, investorId);
 	}
 	
 	private class ICBarDataManager implements UpdateListener{
@@ -69,7 +95,16 @@ public class EventMatLabIntegrator {
     }
     
 
-    
+    public void notifyMatLabLabTickEvent(MarketDataResponse response){
+        java.util.Vector dataCopy;
+        synchronized(this) {
+            dataCopy = (java.util.Vector)data.clone();
+        }
+        for (int i=0; i<dataCopy.size(); i++) {
+            MatLabTickEvent event = new  MatLabTickEvent(this, response);
+              ((MatLabEventListener)dataCopy.elementAt(i)).matLabTickEvent(event);
+        }
+    }
 
     public void notifyMatLabBarData(BarData barData) {
         java.util.Vector dataCopy;

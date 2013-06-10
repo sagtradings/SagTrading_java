@@ -45,15 +45,6 @@ public class MarketDataResponse {
 	private double openPrice;
 	private double preClosePrice;
 	private double preDelta;
-	
-	public long getTimeOfEvent() {
-		return timeOfEvent;
-	}
-
-	public void setTimeOfEvent(long timeOfEvent) {
-		this.timeOfEvent = timeOfEvent;
-	}
-
 	private double preOpenInterest;
 	private double preSettlementPrice;
 	private double settlementPrice;
@@ -64,11 +55,30 @@ public class MarketDataResponse {
 	private double upperLimitPrice;
 	
 	private long timeOfEvent;
+	private long millisecConversionTime;
 	
+	public long getMillisecConversionTime() {
+		return millisecConversionTime;
+	}
+
+	public void setMillisecConversionTime(long millisecConversionTime) {
+		this.millisecConversionTime = millisecConversionTime;
+	}
+
 	private int volume;
 	
 	private double upVolume;
 	private double downVolume;
+	
+	public long getTimeOfEvent() {
+		return timeOfEvent;
+	}
+
+	public void setTimeOfEvent(long timeOfEvent) {
+		this.timeOfEvent = timeOfEvent;
+	}
+
+
 
 	public double getUpVolume() {
 		return upVolume;

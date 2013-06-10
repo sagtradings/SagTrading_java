@@ -2,7 +2,7 @@ package main;
 
 import listeners.BarDataManager;
 import listeners.DefaultCTPListener;
-import nativeinterfaces.DefaultNativeInterface;
+import nativeinterfaces.MarketDataNativeInterface;
 
 import bo.MarketDataResponse;
 

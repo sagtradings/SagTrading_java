@@ -10,7 +10,7 @@ import listeners.DefaultCTPListener;
 import listeners.StopLossListener;
 import listeners.TradeListener;
 import listeners.TradeMarketDataListener;
-import nativeinterfaces.DefaultNativeInterface;
+import nativeinterfaces.MarketDataNativeInterface;
 import nativeinterfaces.TradingNativeInterface;
 
 public class TradeThrowAway {
@@ -32,8 +32,8 @@ public class TradeThrowAway {
 		//const char  *brokerID = "1013";
 		//new Thread(new TradeIntegratorThread("1013", "123321", "00000008")).start();
 		new TradingNativeInterface().subscribeListener(new TradeListener());
-		new DefaultNativeInterface().subscribeListener(new TradeMarketDataListener());
-		new DefaultNativeInterface().sendLoginMessage("1013", "123321", "00000008");
+		new MarketDataNativeInterface().subscribeListener(new TradeMarketDataListener());
+		new MarketDataNativeInterface().sendLoginMessage("1013", "123321", "00000008");
 		new TradingNativeInterface().sendLoginMessage("1013", "123321", "00000008");
 		
 		String timerContext = "create context SegmentedByInstrument partition by  instrumentID from bo.TradeRequest, instrumentId from bo.MarketDataResponse";
