@@ -145,7 +145,7 @@ public class TestCTPListener implements ICTPListener{
 				response.setPreSettlementPrice(Double.parseDouble(txtData[PRE_SETTLEMENT_PRICE]));
 				response.setSettlementPrice(Double.parseDouble(txtData[SETTLEMENT_PRICE]));
 				
-				response.setTimeOfEvent(Long.parseLong(txtData[TIME_OF_EVENT]));
+				response.setCreationTimeStamp(Long.parseLong(txtData[TIME_OF_EVENT]));
 				response.setTradingDay(txtData[TRADING_DAY]);
 				response.setTurnOver(Double.parseDouble(txtData[TURN_OVER]));
 				response.setUpdateMillisec(Integer.parseInt(txtData[UPDATE_MILLISEC]));
