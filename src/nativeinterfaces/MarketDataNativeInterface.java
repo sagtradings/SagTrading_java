@@ -1,7 +1,6 @@
 package nativeinterfaces;
 
 import listeners.DefaultCTPListener;
-import listeners.ICTPListener;
 
 public class MarketDataNativeInterface{
 
