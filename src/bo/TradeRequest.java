@@ -24,7 +24,18 @@ public class TradeRequest {
 	private int	requestID;
 	private int	userForceClose;
 	private int	swapOrder;
+	private double cutOffPrice;
 	
+	public double getCutOffPrice() {
+		return cutOffPrice;
+	}
+
+
+	public void setCutOffPrice(double cutOffPrice) {
+		this.cutOffPrice = cutOffPrice;
+	}
+
+
 	public TradeRequest(){
 		
 	}
