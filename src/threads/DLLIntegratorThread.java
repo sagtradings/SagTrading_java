@@ -1,14 +1,14 @@
 package threads;
 
 import listeners.DefaultCTPListener;
-import nativeinterfaces.DefaultNativeInterface;
+import nativeinterfaces.MarketDataNativeInterface;
 
 public class DLLIntegratorThread implements Runnable {
 
 	@Override
 	public void run() {
 		DefaultCTPListener ctpListener = new DefaultCTPListener();
-		DefaultNativeInterface nativeInterface = new DefaultNativeInterface();
+		MarketDataNativeInterface nativeInterface = new MarketDataNativeInterface();
 		nativeInterface.subscribeListener(ctpListener);
 		nativeInterface.sendQuoteRequest(new String[]{});
 
