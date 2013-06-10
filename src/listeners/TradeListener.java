@@ -1,18 +1,17 @@
 package listeners;
 
-import com.espertech.esper.client.EPRuntime;
-import com.espertech.esper.client.EPServiceProvider;
-import com.espertech.esper.client.EPServiceProviderManager;
-
 import nativeinterfaces.MarketDataNativeInterface;
 import nativeinterfaces.TradingNativeInterface;
 import orderrepository.OrderBucket;
 import orderrepository.OrderRepository;
-import bo.ErrorResult;
 import bo.LoginResponse;
 import bo.OrderActionRequest;
 import bo.OrderInsertResponse;
 import bo.TradeDataResponse;
+
+import com.espertech.esper.client.EPRuntime;
+import com.espertech.esper.client.EPServiceProvider;
+import com.espertech.esper.client.EPServiceProviderManager;
 
 public class TradeListener extends DefaultCTPListener {
 

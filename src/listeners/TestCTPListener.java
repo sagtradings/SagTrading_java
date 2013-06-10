@@ -85,11 +85,11 @@ public class TestCTPListener implements ICTPListener{
 	 public final int VOLUME = 45;
 	
 	
-	private String fileHandle;
+	
 	private List<MarketDataResponse> testData = new ArrayList<MarketDataResponse>(10);
 	
 	public TestCTPListener(String fileHandle){
-		this.fileHandle = fileHandle;
+		
 		String line;
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(fileHandle));
