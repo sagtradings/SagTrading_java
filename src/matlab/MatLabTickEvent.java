@@ -334,10 +334,10 @@ public class MatLabTickEvent extends java.util.EventObject{
 		delegate.setUpperLimitPrice(upperLimitPrice);
 	}
 	public long getTimeOfEvent() {
-		return delegate.getTimeOfEvent();
+		return delegate.getCreationTimeStamp();
 	}
 	public void setTimeOfEvent(long timeOfEvent) {
-		delegate.setTimeOfEvent(timeOfEvent);
+		delegate.setCreationTimeStamp(timeOfEvent);
 	}
 	public int getVolume() {
 		return delegate.getVolume();
