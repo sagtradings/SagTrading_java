@@ -51,8 +51,8 @@ public class BarDataEntry {
 	public void reset(){
 		marketData = new Vector<MarketDataResponse>(10);
 		barDataEntry = new BarData();
-		barDataEntry.setHigh(Double.MAX_VALUE);
-		barDataEntry.setLow(Double.MIN_VALUE);
+		barDataEntry.setHigh(Double.MIN_VALUE);
+		barDataEntry.setLow(Double.MAX_VALUE);
 	}
 	
 	public BarData evict(){
@@ -63,6 +63,7 @@ public class BarDataEntry {
 		answer.setDownVolume(barDataEntry.getDownVolume());
 		answer.setHigh(barDataEntry.getHigh());
 		answer.setLow(barDataEntry.getLow());
+		answer.setInstrumentId(marketData.get(0).getInstrumentId());
 		return answer;
 	}
 	

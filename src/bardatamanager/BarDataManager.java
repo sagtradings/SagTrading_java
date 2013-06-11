@@ -36,7 +36,7 @@ public class BarDataManager {
 		}
 		double tickPrice = mdResponse.getLastPrice();
 		BarData barData = entry.getBarDataEntry();
-		if(tickPrice < barData.getHigh()){
+		if(tickPrice > barData.getHigh()){
 			barData.setHigh(tickPrice);
 		}
 		if(tickPrice < barData.getLow()){

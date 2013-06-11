@@ -1,12 +1,13 @@
 package bardatamanager;
 
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 
 public class BarDataRegistry {
 
 	
-	private Map<String, BarDataEntry> barDataEntries = new HashMap<String, BarDataEntry>(10);
+	private Map<String, BarDataEntry> barDataEntries = new Hashtable<String, BarDataEntry>(10);
 	
 	
 	
