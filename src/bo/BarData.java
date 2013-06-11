@@ -33,6 +33,13 @@ public class BarData {
 	private double open;
 	private double close;
 	private double upVolume;
+	private String instrumentId;
+	public String getInstrumentId() {
+		return instrumentId;
+	}
+	public void setInstrumentId(String instrumentId) {
+		this.instrumentId = instrumentId;
+	}
 	public long getCreationTimeStamp() {
 		return creationTimeStamp;
 	}
