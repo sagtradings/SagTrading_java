@@ -26,8 +26,8 @@ import bo.MarketDataResponse;
 
 public class MockEventMatLabIntegrator {
 	 
-	public MockEventMatLabIntegrator(){
-		MockMDNativeInterface mockJNI = new MockMDNativeInterface("c:\\mddata\\rawdata.csv");
+	public MockEventMatLabIntegrator(String mockDataFile){
+		MockMDNativeInterface mockJNI = new MockMDNativeInterface(mockDataFile);
 		mockJNI.subscribeListener(new ICCtpListener());
 
 	}
