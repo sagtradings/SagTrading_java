@@ -6,7 +6,8 @@ public class MatLabEvent extends java.util.EventObject {
     private static final long serialVersionUID = 1L;
 
     
-    public double closePrice,openPrice, downVolume, highPrice, lowPrice, upVolume;        
+    public double closePrice,openPrice, downVolume, highPrice, lowPrice, upVolume;
+    public String instrumentId;
     public MatLabEvent(Object obj, BarData barData) {
         super(obj);
         this.closePrice = barData.getClose();
@@ -15,8 +16,16 @@ public class MatLabEvent extends java.util.EventObject {
         this.highPrice = barData.getHigh();
         this.lowPrice = barData.getLow();
         this.upVolume = barData.getUpVolume();
+        this.instrumentId = barData.getInstrumentId();
+        
 
     }
+	public String getInstrumentId() {
+		return instrumentId;
+	}
+	public void setInstrumentId(String instrumentId) {
+		this.instrumentId = instrumentId;
+	}
 	public double getClosePrice() {
 		return closePrice;
 	}
