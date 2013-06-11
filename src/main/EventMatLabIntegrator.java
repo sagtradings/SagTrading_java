@@ -4,6 +4,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.swing.JOptionPane;
+
 import listeners.DefaultCTPListener;
 import matlab.MatLabEvent;
 import matlab.MatLabEventListener;
@@ -52,13 +54,15 @@ public class EventMatLabIntegrator {
 			//BarDataManager.
 			bardatamanager.BarDataManager barManager = bardatamanager.BarDataManager.getInstance();
 			try {
+				
 				BarData compiledData = barManager.sendMarketData(response);
 				if(compiledData != null){
+					//JOptionPane.showMessageDialog(null, "Sending Bar DAta");
 					long elapsedTime = System.currentTimeMillis() - startTime;
-					System.out.println("got marketData");
-					System.out.println("Open: " + compiledData.getOpen() + " Close: " + compiledData.getClose() + " Low: " + compiledData.getLow() + " High: " + compiledData.getHigh() + " UpVolume: " + compiledData.getUpVolume() + " DownVolume: " + compiledData.getDownVolume());
-					System.out.println("elapsed time: " + elapsedTime);
-					startTime = System.currentTimeMillis();
+					//System.out.println("got marketData");
+					//System.out.println("Open: " + compiledData.getOpen() + " Close: " + compiledData.getClose() + " Low: " + compiledData.getLow() + " High: " + compiledData.getHigh() + " UpVolume: " + compiledData.getUpVolume() + " DownVolume: " + compiledData.getDownVolume());
+					//System.out.println("elapsed time: " + elapsedTime);
+					//startTime = System.currentTimeMillis();
 					notifyMatLabBarData(compiledData);
 				}
 			} catch (EntryNotInitializedException e) {
@@ -76,6 +80,7 @@ public class EventMatLabIntegrator {
 	}
 	
 	public void subscribeMarketData(String instrument){
+		//JOptionPane.showMessageDialog(null, "subscribing bar data");
 		new MarketDataNativeInterface().sendQuoteRequest(new String[]{instrument});
 	}
 	
@@ -85,6 +90,7 @@ public class EventMatLabIntegrator {
 	}
 	
 	public void requestLogin(String brokerId, String password, String investorId){
+		new MarketDataNativeInterface().subscribeListener(new ICMDListener());
 		new MarketDataNativeInterface().sendLoginMessage(brokerId, password, investorId);
 		
 	}
