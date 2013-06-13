@@ -34,6 +34,13 @@ public class BarData {
 	private double close;
 	private double upVolume;
 	private String instrumentId;
+	private String timestamp;
+	public String getTimestamp() {
+		return timestamp;
+	}
+	public void setTimestamp(String timestamp) {
+		this.timestamp = timestamp;
+	}
 	public String getInstrumentId() {
 		return instrumentId;
 	}
