@@ -1,5 +1,9 @@
 package bardatamanager;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 import bo.BarData;
 import bo.MarketDataResponse;
 
@@ -32,6 +36,10 @@ public class BarDataManager {
 		}
 		if(entry.isEvictable(mdResponse)){
 			evictionAnswer = entry.evict();
+			SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss.000");
+			Date evictionDate = Calendar.getInstance().getTime();
+			evictionDate.setTime(mdResponse.getMillisecConversionTime());
+			evictionAnswer.setTimestamp(formatter.format(evictionDate));
 			entry.reset();
 		}
 		double tickPrice = mdResponse.getLastPrice();
