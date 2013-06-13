@@ -8,15 +8,34 @@ import java.util.Map;
 
 import bardatamanager.EntryNotInitializedException;
 import bo.BarData;
+import bo.ErrorResult;
 import bo.MarketDataResponse;
+import bo.SubscribeMarketDataResponse;
 
 public final class NonEsperMarketDataListener extends DefaultCTPListener {
+	@Override
+	public void onSubscribeMarketDataResponse(
+			SubscribeMarketDataResponse subscribeResponse) {
+		System.out.println("Market data subscribed");
+	}
+
+
+
+
 	private Map<String, Long> startTimes = new HashMap<String, Long>(10);
 	private SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHH:mm:ss");
 
 	
 	
 	
+	@Override
+	public void onRspError(ErrorResult errorRslt) {
+		System.out.println("error");
+	}
+
+
+
+
 	public void onRtnDepthMarketData(MarketDataResponse response) {
 		double deltaAskPrice1 = (response.getLastPrice() - response.getAskPrice1());
 		double deltaBidPrice1 = response.getLastPrice() - response.getBidPrice1();

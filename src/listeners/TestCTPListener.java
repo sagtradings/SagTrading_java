@@ -18,6 +18,7 @@ import bo.MarketDataResponse;
 import bo.OrderActionRequest;
 import bo.OrderInsertResponse;
 import bo.SettlementResponse;
+import bo.SubscribeMarketDataResponse;
 import bo.TradeDataResponse;
 
 import com.espertech.esper.client.EPRuntime;
@@ -248,6 +249,13 @@ public class TestCTPListener implements ICTPListener{
 
 	@Override
 	public void onOrderActionResponse(OrderActionRequest initiatingAction) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSubscribeMarketDataResponse(
+			SubscribeMarketDataResponse subscribeResponse) {
 		// TODO Auto-generated method stub
 		
 	}
