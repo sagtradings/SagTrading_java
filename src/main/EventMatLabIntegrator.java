@@ -7,9 +7,9 @@ import java.util.Date;
 import javax.swing.JOptionPane;
 
 import listeners.DefaultCTPListener;
-import matlab.MatLabEvent;
+import matlab.BarDataEvent;
 import matlab.MatLabEventListener;
-import matlab.MatLabTickEvent;
+import matlab.MarketDataEvent;
 import nativeinterfaces.MarketDataNativeInterface;
 import bardatamanager.BarDataManager;
 import bardatamanager.EntryNotInitializedException;
@@ -115,8 +115,8 @@ public class EventMatLabIntegrator {
             dataCopy = (java.util.Vector)data.clone();
         }
         for (int i=0; i<dataCopy.size(); i++) {
-            MatLabTickEvent event = new  MatLabTickEvent(this, response);
-              ((MatLabEventListener)dataCopy.elementAt(i)).matLabTickEvent(event);
+            MarketDataEvent event = new  MarketDataEvent(this, response);
+              ((MatLabEventListener)dataCopy.elementAt(i)).marketDataEvent(event);
         }
     }
 
@@ -126,8 +126,8 @@ public class EventMatLabIntegrator {
             dataCopy = (java.util.Vector)data.clone();
         }
         for (int i=0; i<dataCopy.size(); i++) {
-            MatLabEvent event = new  MatLabEvent(this, barData);
-              ((MatLabEventListener)dataCopy.elementAt(i)).matLabEvent(event);
+            BarDataEvent event = new  BarDataEvent(this, barData);
+              ((MatLabEventListener)dataCopy.elementAt(i)).barDataEvent(event);
         }
     }
 
