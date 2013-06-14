@@ -4,6 +4,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.log4j.Logger;
+
 import nativeinterfaces.MockMDNativeInterface;
 
 import com.espertech.esper.client.EPServiceProvider;
@@ -29,7 +31,7 @@ import bo.SubscribeMarketDataResponse;
 
 
 public class MockEventMatLabIntegrator {
-	 
+	 private static Logger log = Logger.getLogger(MockEventMatLabIntegrator.class);
 	public MockEventMatLabIntegrator(){
 
 
@@ -77,7 +79,7 @@ public class MockEventMatLabIntegrator {
 		//JOptionPane.showMessageDialog(null, "subscribing bar data");
 		//new MarketDataNativeInterface().sendQuoteRequest(new String[]{instrument});
 		LoginResponse mockResponse = new LoginResponse();
-		
+		log.info("Subscribed market data");
 		notifyMatLabLogInEvent(mockResponse);
 	}
 	
