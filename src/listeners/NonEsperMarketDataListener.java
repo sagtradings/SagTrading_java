@@ -55,7 +55,7 @@ public final class NonEsperMarketDataListener extends DefaultCTPListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//BarDataManager.
+
 		bardatamanager.BarDataManager barManager = bardatamanager.BarDataManager.getInstance();
 		try {
 			BarData compiledData = barManager.sendMarketData(response);

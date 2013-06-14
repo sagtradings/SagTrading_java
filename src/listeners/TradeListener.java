@@ -89,9 +89,7 @@ public class TradeListener extends DefaultCTPListener {
 
 	@Override
 	public void onRspUserLogin(LoginResponse loginResponse) {
-		//JOptionPane.showMessageDialog(null, "logged in");
 		System.out.println("logged in");
-		//new TradingNativeInterface().sendSettlementReqest("1013", "00000008");
 	}
 
 }

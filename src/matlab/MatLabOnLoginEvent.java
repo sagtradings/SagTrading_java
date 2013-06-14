@@ -7,7 +7,6 @@ import bo.LoginResponse;
 public class MatLabOnLoginEvent extends EventObject {
 	private LoginResponse delegate;
 	private long creationTimeStamp;
-	private int maxOrder;
 	public int getMaxOrder() {
 		return delegate.getMaxOrder();
 	}

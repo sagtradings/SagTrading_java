@@ -25,15 +25,6 @@ public class TradeThrowAway {
 	}
 	
 	public static void main(String[] args){
-		//TradingNativeInterface testInterface = new TradingNativeInterface();
-		
-		
-
-		
-		//const char  *userID = "00000008";
-		//const char  *password = "123321";
-		//const char  *brokerID = "1013";
-		//new Thread(new TradeIntegratorThread("1013", "123321", "00000008")).start();
 		TradingNativeInterface tradingNativeInterface = new TradingNativeInterface();
 		tradingNativeInterface.subscribeListener(new TradeListener());
 		MarketDataNativeInterface marketDataNativeInterface = new MarketDataNativeInterface();
@@ -119,33 +110,9 @@ public class TradeThrowAway {
 			e.printStackTrace();
 		}
 		
-		
-
-		/*orderField.Direction = THOST_FTDC_D_Sell;
-		orderField.OrderPriceType = THOST_FTDC_OPT_LimitPrice;
-		//orderField.Direction = THOST_FTDC_D_Buy;
-		strcpy_s(orderField.CombOffsetFlag, "0");
-		strcpy_s(orderField.CombHedgeFlag, "1");
-		orderField.LimitPrice = 2600; 
-		strcpy_s(orderField.GTDDate, "");
-		orderField.VolumeCondition = THOST_FTDC_VC_AV;
-		orderField.MinVolume = 0;
-		orderField.ContingentCondition = THOST_FTDC_CC_Immediately;
-		orderField.StopPrice = 0;
-		orderField.ForceCloseReason = THOST_FTDC_FCC_NotForceClose;
-		orderField.IsAutoSuspend = 0;
-		orderField.VolumeTotalOriginal = 10;
-		orderField.TimeCondition = THOST_FTDC_TC_GFD; */
 		new TradingNativeInterface().sendSettlementReqest("1013", "00000008");
 		tradingNativeInterface.sendTradeRequest("1013", "123321", "00000008", initialRequest);
-		//new TradingNativeInterface().sendOrderAction("1013", "123321", "00000008", cancelRequest);
-		
-		//testInterface.sendOrderAction("1013", "123321", "00000008", null);
-		long startTime = System.currentTimeMillis();
-		//while(true);
-		
-		//while(System.currentTimeMillis() - startTime <= 5000);
-		//new DefaultNativeInterface().sendUnsubscribeQuoteRequest(quote1);
+
 		System.out.println("exiting program");
 	}
 }
