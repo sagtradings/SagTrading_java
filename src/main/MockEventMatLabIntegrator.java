@@ -1,27 +1,15 @@
 package main;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import org.apache.log4j.Logger;
-
-import nativeinterfaces.MockMDNativeInterface;
-
-import com.espertech.esper.client.EPServiceProvider;
-import com.espertech.esper.client.EPServiceProviderManager;
-import com.espertech.esper.client.EPStatement;
-import com.espertech.esper.client.EventBean;
-import com.espertech.esper.client.UpdateListener;
-
 import listeners.DefaultCTPListener;
-import listeners.ICTPListener;
-import listeners.TestCTPListener;
 import matlab.BarDataEvent;
+import matlab.MarketDataEvent;
 import matlab.MatLabEventListener;
 import matlab.MatLabOnLoginEvent;
 import matlab.MatLabOnSubscribeDataEvent;
-import matlab.MarketDataEvent;
+import nativeinterfaces.MockMDNativeInterface;
+
+import org.apache.log4j.Logger;
+
 import bardatamanager.BarDataManager;
 import bardatamanager.EntryNotInitializedException;
 import bo.BarData;

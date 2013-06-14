@@ -1,13 +1,8 @@
 package main;
 
-import listeners.BarDataManager;
 import listeners.DefaultCTPListener;
 import listeners.NonEsperMarketDataListener;
 import nativeinterfaces.MarketDataNativeInterface;
-
-import com.espertech.esper.client.EPServiceProvider;
-import com.espertech.esper.client.EPServiceProviderManager;
-import com.espertech.esper.client.EPStatement;
 
 public class Startup {
 	
@@ -21,13 +16,7 @@ public class Startup {
 	public static void main(String[] args){
 		System.out.println(System.getProperty("java.library.path"));
 		System.out.println(System.getProperty("path"));
-		String timerContext = "create context CtxEachSecond initiated  by pattern [timer:at(*, *, *, *, *, 1) or every timer:interval(1000 msec)]  terminated after 1 seconds";
-		String listenerStmt = "context CtxEachSecond select instrumentId, first(lastPrice) as openPrice, lastPrice as closePrice, min(lastPrice) as minPrice, max(lastPrice) as maxPrice, sum(upVolume) as upVolume, sum(downVolume) as downVolume from bo.MarketDataResponse group by instrumentId  output last when terminated";
-		
-	//	EPServiceProvider epService = EPServiceProviderManager.getDefaultProvider();
-		//epService.getEPAdministrator().createEPL(timerContext);
-		//EPStatement statement = epService.getEPAdministrator().createEPL(listenerStmt);
-		//statement.addListener(new BarDataManager());
+
 		DefaultCTPListener ctpListener = new NonEsperMarketDataListener();
 		MarketDataNativeInterface nativeInterface = new MarketDataNativeInterface();
 		nativeInterface.subscribeListener(ctpListener);

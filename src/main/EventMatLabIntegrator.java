@@ -4,12 +4,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.swing.JOptionPane;
-
 import listeners.DefaultCTPListener;
 import matlab.BarDataEvent;
-import matlab.MatLabEventListener;
 import matlab.MarketDataEvent;
+import matlab.MatLabEventListener;
 import nativeinterfaces.MarketDataNativeInterface;
 import bardatamanager.BarDataManager;
 import bardatamanager.EntryNotInitializedException;
@@ -33,7 +31,6 @@ public class EventMatLabIntegrator {
 	private class ICMDListener extends DefaultCTPListener{
 
 		private SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHH:mm:ss");
-		private long startTime = System.currentTimeMillis();
 		public void onRtnDepthMarketData(MarketDataResponse response) {
 
 			double deltaAskPrice1 = (response.getLastPrice() - response.getAskPrice1());
@@ -57,12 +54,6 @@ public class EventMatLabIntegrator {
 				
 				BarData compiledData = barManager.sendMarketData(response);
 				if(compiledData != null){
-					//JOptionPane.showMessageDialog(null, "Sending Bar DAta");
-					long elapsedTime = System.currentTimeMillis() - startTime;
-					//System.out.println("got marketData");
-					//System.out.println("Open: " + compiledData.getOpen() + " Close: " + compiledData.getClose() + " Low: " + compiledData.getLow() + " High: " + compiledData.getHigh() + " UpVolume: " + compiledData.getUpVolume() + " DownVolume: " + compiledData.getDownVolume());
-					//System.out.println("elapsed time: " + elapsedTime);
-					//startTime = System.currentTimeMillis();
 					notifyMatLabBarData(compiledData);
 				}
 			} catch (EntryNotInitializedException e) {
