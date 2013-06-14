@@ -9,7 +9,7 @@ public class Startup {
 	static{
 		System.loadLibrary("CTPDLL");
 		System.out.println("library loaded");
-		//gussiaas123abcddd
+		//gussiaas
 	}
 	
 	public static void main(String[] args){
