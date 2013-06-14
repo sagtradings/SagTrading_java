@@ -1,9 +1,5 @@
 package listeners;
 
-import com.espertech.esper.client.EPRuntime;
-import com.espertech.esper.client.EPServiceProvider;
-import com.espertech.esper.client.EPServiceProviderManager;
-
 import bo.ErrorResult;
 import bo.LoginResponse;
 import bo.MarketDataResponse;
@@ -11,6 +7,10 @@ import bo.OrderActionRequest;
 import bo.OrderInsertResponse;
 import bo.SettlementResponse;
 import bo.TradeDataResponse;
+
+import com.espertech.esper.client.EPRuntime;
+import com.espertech.esper.client.EPServiceProvider;
+import com.espertech.esper.client.EPServiceProviderManager;
 
 public class TradeMarketDataListener extends DefaultCTPListener {
 
@@ -55,6 +55,7 @@ public class TradeMarketDataListener extends DefaultCTPListener {
 		EPServiceProvider epService = EPServiceProviderManager.getDefaultProvider();
 		EPRuntime runtime = epService.getEPRuntime();
 		runtime.sendEvent(response);
+		
 
 	}
 
