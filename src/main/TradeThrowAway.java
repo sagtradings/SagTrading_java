@@ -1,5 +1,7 @@
 package main;
 
+import orderrefgenerator.MessageIDGenerator;
+import orderrefgenerator.OrderRefGenerator;
 import orderrepository.IncompleteBucketException;
 import orderrepository.OrderBucket;
 import orderrepository.OrderRepository;
@@ -56,8 +58,8 @@ public class TradeThrowAway {
 		initialRequest.setVolumeTotalOriginal(1);
 		initialRequest.setTimeCondition("3");
 		initialRequest.setInstrumentID("IF1307");
-		initialRequest.setOrderRef("00000000002");
-		initialRequest.setRequestID(1);
+		initialRequest.setOrderRef(OrderRefGenerator.getInstance().getNextRef());
+		initialRequest.setRequestID(MessageIDGenerator.getInstance().getNextID());
 		
 		TradeRequest exitRequest = new TradeRequest();
 		exitRequest.setDirection("1");
@@ -75,8 +77,8 @@ public class TradeThrowAway {
 		exitRequest.setVolumeTotalOriginal(1);
 		exitRequest.setTimeCondition("3");
 		exitRequest.setInstrumentID("IF1307");
-		exitRequest.setOrderRef("00000000003");
-		exitRequest.setRequestID(2);
+		exitRequest.setOrderRef(OrderRefGenerator.getInstance().getNextRef());
+		exitRequest.setRequestID(MessageIDGenerator.getInstance().getNextID());
 		
 		TradeRequest stopLossRequest = new TradeRequest();
 		stopLossRequest.setDirection("1");
@@ -94,9 +96,9 @@ public class TradeThrowAway {
 		stopLossRequest.setVolumeTotalOriginal(1);
 		stopLossRequest.setTimeCondition("3");
 		stopLossRequest.setInstrumentID("IF1307");
-		stopLossRequest.setOrderRef("00000000004");
+		stopLossRequest.setOrderRef(OrderRefGenerator.getInstance().getNextRef());
 		stopLossRequest.setCutOffPrice(2590);
-		stopLossRequest.setRequestID(3);
+		stopLossRequest.setRequestID(MessageIDGenerator.getInstance().getNextID());
 		
 		OrderBucket bucket = new OrderBucket();
 		bucket.setInitialRequest(initialRequest);

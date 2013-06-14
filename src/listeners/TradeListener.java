@@ -2,6 +2,7 @@ package listeners;
 
 import nativeinterfaces.MarketDataNativeInterface;
 import nativeinterfaces.TradingNativeInterface;
+import orderrefgenerator.OrderRefGenerator;
 import orderrepository.OrderBucket;
 import orderrepository.OrderRepository;
 import bo.ErrorResult;
@@ -89,7 +90,7 @@ public class TradeListener extends DefaultCTPListener {
 
 	@Override
 	public void onRspUserLogin(LoginResponse loginResponse) {
-		System.out.println("logged in");
+		OrderRefGenerator.getInstance().setInitialValue(loginResponse.getMaxOrder());
 	}
 
 }
