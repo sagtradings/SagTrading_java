@@ -9,7 +9,7 @@ public class Startup {
 	static{
 		System.loadLibrary("CTPDLL");
 		System.out.println("library loaded");
-		//awygy
+		//zwygy
 	}
 	
 	public static void main(String[] args){
