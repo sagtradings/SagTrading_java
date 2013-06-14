@@ -8,7 +8,7 @@ public class Startup {
 	
 	static{
 		System.loadLibrary("CTPDLL");
-		System.out.println("library loadedxfxxxxx");
+		System.out.println("library loaxdedxfxxxxx");
 		//awygyzwygy
 	}
 	
