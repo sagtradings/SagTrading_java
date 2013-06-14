@@ -31,6 +31,7 @@ public class EventMatLabIntegrator {
 	private class ICMDListener extends DefaultCTPListener{
 
 		private SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHH:mm:ss");
+		@Override
 		public void onRtnDepthMarketData(MarketDataResponse response) {
 
 			double deltaAskPrice1 = (response.getLastPrice() - response.getAskPrice1());

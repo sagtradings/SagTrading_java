@@ -16,6 +16,7 @@ import bo.SubscribeMarketDataResponse;
 
 public final class NonEsperMarketDataListener extends DefaultCTPListener {
 	private static Logger log = Logger.getLogger(NonEsperMarketDataListener.class);
+	@Override
 	public void onSubscribeMarketDataResponse(
 			SubscribeMarketDataResponse subscribeResponse) {
 		System.out.println("Market data subscribed");
@@ -38,6 +39,7 @@ public final class NonEsperMarketDataListener extends DefaultCTPListener {
 
 
 
+	@Override
 	public void onRtnDepthMarketData(MarketDataResponse response) {
 		log.info("instrument: " + response.getInstrumentId() + " Open Price: " + response.getOpenPrice()); 
 		double deltaAskPrice1 = (response.getLastPrice() - response.getAskPrice1());

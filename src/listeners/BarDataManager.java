@@ -11,6 +11,7 @@ public class BarDataManager implements UpdateListener {
 	private long startTime = System.currentTimeMillis();
 	Calendar startCal = Calendar.getInstance();
 	Calendar endCal = Calendar.getInstance();
+	@Override
 	public void update(EventBean[] arg0, EventBean[] arg1) {
 		long elapsedTime = System.currentTimeMillis() - startTime;
 		System.out.println("elapsed time: " + elapsedTime); 
