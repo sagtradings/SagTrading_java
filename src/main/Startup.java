@@ -8,8 +8,6 @@ public class Startup {
 	
 	static{
 		System.loadLibrary("CTPDLL");
-
-		//Brian Gussiaas
 		System.out.println("library loaded");
 	}
 	
