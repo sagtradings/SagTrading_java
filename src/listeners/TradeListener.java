@@ -1,7 +1,5 @@
 package listeners;
 
-import javax.swing.JOptionPane;
-
 import nativeinterfaces.MarketDataNativeInterface;
 import nativeinterfaces.TradingNativeInterface;
 import orderrepository.OrderBucket;
@@ -50,6 +48,23 @@ public class TradeListener extends DefaultCTPListener {
 		else if(bucket.getOrderState() == OrderBucket.orderStates.EXIT_REQUEST){
 			bucket.setOrderState(OrderBucket.orderStates.CYCLE_COMPLETED);
 			new MarketDataNativeInterface().sendUnsubscribeQuoteRequest(new String[]{instrument});
+		}
+		else if(bucket.getOrderState() == OrderBucket.orderStates.STOP_LOSS_COMPLETED){
+			OrderActionRequest cancelRequest = new OrderActionRequest();
+			cancelRequest.setActionFlag("0");
+			cancelRequest.setBrokerID("1013");
+			cancelRequest.setExchangeID("");
+			cancelRequest.setFrontID(0);
+			cancelRequest.setInvestorID("00000008");
+			cancelRequest.setInstrumentID(instrument);
+			cancelRequest.setLimitPrice(0);
+			cancelRequest.setOrderActionRef(0);
+			cancelRequest.setOrderRef(bucket.getExitRequest().getOrderRef());
+			cancelRequest.setOrderSysID("");
+			cancelRequest.setRequestID(0);
+			cancelRequest.setSessionID(0);
+			cancelRequest.setUserID("1013");
+			new TradingNativeInterface().sendOrderAction("1013", "123321", "00000008", cancelRequest);
 		}
 		
 	}
