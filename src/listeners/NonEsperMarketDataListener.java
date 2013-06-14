@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import bardatamanager.EntryNotInitializedException;
 import bo.BarData;
 import bo.ErrorResult;
@@ -13,7 +15,7 @@ import bo.MarketDataResponse;
 import bo.SubscribeMarketDataResponse;
 
 public final class NonEsperMarketDataListener extends DefaultCTPListener {
-	@Override
+	private static Logger log = Logger.getLogger(NonEsperMarketDataListener.class);
 	public void onSubscribeMarketDataResponse(
 			SubscribeMarketDataResponse subscribeResponse) {
 		System.out.println("Market data subscribed");
@@ -37,6 +39,7 @@ public final class NonEsperMarketDataListener extends DefaultCTPListener {
 
 
 	public void onRtnDepthMarketData(MarketDataResponse response) {
+		log.info("instrument: " + response.getInstrumentId() + " Open Price: " + response.getOpenPrice()); 
 		double deltaAskPrice1 = (response.getLastPrice() - response.getAskPrice1());
 		double deltaBidPrice1 = response.getLastPrice() - response.getBidPrice1();
 		if(Math.abs(deltaAskPrice1) < deltaBidPrice1){

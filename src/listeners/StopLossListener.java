@@ -16,7 +16,7 @@ public class StopLossListener implements UpdateListener {
 	@Override
 	public void update(EventBean[] arg0, EventBean[] arg1) {
 		for(int i = 0, n = arg0.length; i < n; i++){
-			String instrument = (String) arg0[i].get("instrumentID");
+			String instrument = (String) arg0[i].get("a.instrumentID");
 			OrderBucket bucket = OrderRepository.getInstance().getOrderBucket(instrument);
 			bucket.setOrderState(OrderBucket.orderStates.STOP_LOSS_COMPLETED);
 			
@@ -30,7 +30,7 @@ public class StopLossListener implements UpdateListener {
 			cancelRequest.setInstrumentID(instrument);
 			cancelRequest.setLimitPrice(0);
 			cancelRequest.setOrderActionRef(0);
-			cancelRequest.setOrderRef(stopLoss.getOrderRef());
+			cancelRequest.setOrderRef(bucket.getExitRequest().getOrderRef());
 			cancelRequest.setOrderSysID("");
 			cancelRequest.setRequestID(0);
 			cancelRequest.setSessionID(0);
