@@ -6,77 +6,66 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
 import bardatamanager.EntryNotInitializedException;
 import bo.BarData;
 import bo.ErrorResult;
 import bo.MarketDataResponse;
 import bo.SubscribeMarketDataResponse;
+import org.apache.log4j.Logger;
 
 public final class NonEsperMarketDataListener extends DefaultCTPListener {
-	private static Logger log = Logger.getLogger(NonEsperMarketDataListener.class);
-	@Override
-	public void onSubscribeMarketDataResponse(
-			SubscribeMarketDataResponse subscribeResponse) {
-		System.out.println("Market data subscribed");
-	}
+    private static Logger log = Logger.getLogger(NonEsperMarketDataListener.class);
+    private Map<String, Long> startTimes = new HashMap<String, Long>(10);
+    private SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHH:mm:ss");
 
+    @Override
+    public void onSubscribeMarketDataResponse(
+            SubscribeMarketDataResponse subscribeResponse) {
+        System.out.println("Market data subscribed");
+    }
 
+    @Override
+    public void onRspError(ErrorResult errorRslt) {
+        System.out.println("error");
+    }
 
+    @Override
+    public void onRtnDepthMarketData(MarketDataResponse response) {
+        log.info("instrument: " + response.getInstrumentId() + " Open Price: " + response.getOpenPrice());
+        double deltaAskPrice1 = (response.getLastPrice() - response.getAskPrice1());
+        double deltaBidPrice1 = response.getLastPrice() - response.getBidPrice1();
+        if (Math.abs(deltaAskPrice1) < deltaBidPrice1) {
+            response.setUpVolume(response.getVolume());
+        } else {
+            response.setDownVolume(response.getVolume());
+        }
+        try {
+            Date updateTime = formatter.parse(response.getTradingDay() + response.getUpdateTime());
+            response.setMillisecConversionTime(updateTime.getTime());
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
-	private Map<String, Long> startTimes = new HashMap<String, Long>(10);
-	private SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHH:mm:ss");
-
-	
-	
-	
-	@Override
-	public void onRspError(ErrorResult errorRslt) {
-		System.out.println("error");
-	}
-
-
-
-
-	@Override
-	public void onRtnDepthMarketData(MarketDataResponse response) {
-		log.info("instrument: " + response.getInstrumentId() + " Open Price: " + response.getOpenPrice()); 
-		double deltaAskPrice1 = (response.getLastPrice() - response.getAskPrice1());
-		double deltaBidPrice1 = response.getLastPrice() - response.getBidPrice1();
-		if(Math.abs(deltaAskPrice1) < deltaBidPrice1){
-			response.setUpVolume(response.getVolume());
-		}
-		else{
-			response.setDownVolume(response.getVolume());
-		}
-		try {
-			Date updateTime = formatter.parse(response.getTradingDay() + response.getUpdateTime());
-			response.setMillisecConversionTime(updateTime.getTime());
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		bardatamanager.BarDataManager barManager = bardatamanager.BarDataManager.getInstance();
-		try {
-			BarData compiledData = barManager.sendMarketData(response);
-			if(compiledData != null){
-				Long startTime = startTimes.get(response.getInstrumentId());
-				if(startTime == null){
-					startTime = System.currentTimeMillis();
-					startTimes.put(response.getInstrumentId(), startTime);
-				}
-				long elapsedTime = System.currentTimeMillis() - startTime;
-				System.out.println("got marketData");
-				System.out.println("Instrument: " + response.getInstrumentId() + " Open: " + compiledData.getOpen() + " Close: " + compiledData.getClose() + " Low: " + compiledData.getLow() + " High: " + compiledData.getHigh() + " UpVolume: " + compiledData.getUpVolume() + " DownVolume: " + compiledData.getDownVolume());
-				System.out.println("elapsed time: " + elapsedTime);
-				startTimes.put(response.getInstrumentId(), System.currentTimeMillis());
-			}
-		} catch (EntryNotInitializedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+        bardatamanager.BarDataManager barManager = bardatamanager.BarDataManager.getInstance();
+        try {
+            BarData compiledData = barManager.sendMarketData(response);
+            if (compiledData != null) {
+                Long startTime = startTimes.get(response.getInstrumentId());
+                if (startTime == null) {
+                    startTime = System.currentTimeMillis();
+                    startTimes.put(response.getInstrumentId(), startTime);
+                }
+                long elapsedTime = System.currentTimeMillis() - startTime;
+                System.out.println("got marketData");
+                System.out.println("Instrument: " + response.getInstrumentId() + " Open: " + compiledData.getOpen() + " Close: " + compiledData.getClose() + " Low: " + compiledData.getLow() + " High: " + compiledData.getHigh() + " UpVolume: " + compiledData.getUpVolume() + " DownVolume: " + compiledData.getDownVolume());
+                System.out.println("elapsed time: " + elapsedTime);
+                startTimes.put(response.getInstrumentId(), System.currentTimeMillis());
+            }
+        } catch (EntryNotInitializedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
 }
