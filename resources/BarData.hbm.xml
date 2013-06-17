@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping schema="SAGTRADING">
+
+    <class name="bo.BarData" table="BARDATA">
+        <id name="bardata_id" column="BARDATA_ID">
+            <generator class="identity"/>
+        </id>
+        <property name="timestamp" column="TIMESTAMP" unique="true"/>
+        <property name="low" column="LOW"/>
+        <property name="high" column="HIGH"/>
+        <property name="close" column="CLOSE"/>
+        <property name="upVolume" column="UPVOLUME"/>
+        <property name="instrumentId" column="INSTRUMENTID"/>
+    </class>
+</hibernate-mapping>
+
