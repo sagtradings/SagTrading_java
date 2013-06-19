@@ -26,7 +26,18 @@ public class TradeRequest {
 	private int	swapOrder;
 	private double cutOffPrice;
 	private long creationTimeStamp;
+	private String originatingOrderRef;
 	
+	public String getOriginatingOrderRef() {
+		return originatingOrderRef;
+	}
+
+
+	public void setOriginatingOrderRef(String originatingOrderRef) {
+		this.originatingOrderRef = originatingOrderRef;
+	}
+
+
 	public double getCutOffPrice() {
 		return cutOffPrice;
 	}

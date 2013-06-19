@@ -77,10 +77,11 @@ public class MockMDNativeInterface extends MarketDataNativeInterface{
 	 
 	 public final int UP_VOLUME = 44;
 	 public final int VOLUME = 45;
-	 private List<MarketDataResponse> testData = new ArrayList<MarketDataResponse>(10);
+	 private List<MarketDataResponse> testData;
 	 public MockMDNativeInterface(String fileHandle){
 
 		 String line;
+		 testData = new ArrayList<MarketDataResponse>(10);
 		 try {
 			 BufferedReader br = new BufferedReader(new FileReader(fileHandle));
 			 while((line = br.readLine()) != null){

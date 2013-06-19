@@ -1,12 +1,16 @@
 package main;
 
+
+
+import org.apache.log4j.Logger;
+
 import listeners.DefaultCTPListener;
 import listeners.NonEsperMarketDataListener;
 import nativeinterfaces.MarketDataNativeInterface;
 
 public class Startup {
 	
-
+	private static Logger log = Logger.getLogger(Startup.class);
     static {
         try {
             System.loadLibrary("CTPDLL");
@@ -19,7 +23,8 @@ public class Startup {
     public static void main(String[] args) {
         System.out.println(System.getProperty("java.library.path"));
         System.out.println(System.getProperty("path"));
-
+       // log.info("A test messae");
+        log.debug("A test messacgsex");
         DefaultCTPListener ctpListener = new NonEsperMarketDataListener();
         MarketDataNativeInterface nativeInterface = new MarketDataNativeInterface();
         nativeInterface.subscribeListener(ctpListener);
