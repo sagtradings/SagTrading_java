@@ -8,12 +8,30 @@ public class OrderBucket {
 		INITIAL_REQUEST, 
 		EXIT_REQUEST, 
 		CYCLE_COMPLETED,
-		STOP_LOSS_COMPLETED}
+		STOP_LOSS_COMPLETED,
+		ORDER_TIMEOUT}
 	
 	private TradeRequest initialRequest;
 	private TradeRequest exitRequest;
 	private TradeRequest stopLossRequest;
 	private orderStates orderState;
+	private long timeOut;
+	private long creationTime;
+	
+	public OrderBucket(){
+		this.creationTime = System.currentTimeMillis();
+	}
+	
+	public long getCreationTime() {
+		return creationTime;
+	}
+
+	public long getTimeOut() {
+		return timeOut;
+	}
+	public void setTimeOut(long timeOut) {
+		this.timeOut = timeOut;
+	}
 	public TradeRequest getInitialRequest() {
 		return initialRequest;
 	}

@@ -120,4 +120,17 @@ public class OrderRepository {
 		}
 		return null;
 	}
+	
+	public List<OrderBucket> getAllBucketsByState(OrderBucket.orderStates state){
+		List<OrderBucket> answer = new ArrayList<OrderBucket>(10);
+		Iterator<String> itt = activeOrders.keySet().iterator();
+		while(itt.hasNext()){
+			String key = itt.next();
+			List<OrderBucket> subList = searchBucketsOnState(key, state);
+			for(int i = 0, n = subList.size(); i < n; i++){
+				answer.add(subList.get(i));
+			}
+		}
+		return answer;
+	}
 }

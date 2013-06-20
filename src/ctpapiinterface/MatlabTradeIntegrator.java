@@ -17,6 +17,7 @@ import orderrefgenerator.OrderRefGenerator;
 import orderrepository.IncompleteBucketException;
 import orderrepository.OrderBucket;
 import orderrepository.OrderRepository;
+import orderrepository.OrderTimeOutThread;
 import bo.ErrorResult;
 import bo.LoginResponse;
 import bo.MarketDataResponse;
@@ -39,14 +40,14 @@ public class MatlabTradeIntegrator {
 
 	
 	public MatlabTradeIntegrator(){
-
+		new Thread(new OrderTimeOutThread()).start();
 	}
 	
 	public void sendSettlement(){
 		new TradingNativeInterface().sendSettlementReqest("1013", "00000008");
 	}
 	
-	public String sendOrderSet(String insturment, String initSide, double initPrice, double initSize, double timeOut, double tgp, double tlp){
+	public String sendOrderSet(String insturment, String initSide, double initPrice, double initSize, long timeOut, double tgp, double tlp){
 		String initOrderRef = OrderRefGenerator.getInstance().getNextRef();
 		String exitOrderRef = OrderRefGenerator.getInstance().getNextRef();
 		String stopLossOrderRef = OrderRefGenerator.getInstance().getNextRef();
@@ -57,6 +58,7 @@ public class MatlabTradeIntegrator {
 		initialRequest.setOriginatingOrderRef(initOrderRef);
 		initialRequest.setRequestID(MessageIDGenerator.getInstance().getNextID());
 		OrderBucket bucket = new OrderBucket();
+		bucket.setTimeOut(timeOut);
 		bucket.setOrderState(OrderBucket.orderStates.INITIAL_REQUEST);
 		bucket.setInitialRequest(initialRequest);
 		
@@ -115,6 +117,12 @@ public class MatlabTradeIntegrator {
 
 
 
+
+		@Override
+		public void onOrderActionResponse(OrderActionRequest initiatingAction) {
+			// TODO Auto-generated method stub
+			super.onOrderActionResponse(initiatingAction);
+		}
 
 		@Override
 		public void onRspError(ErrorResult errorRslt) {
