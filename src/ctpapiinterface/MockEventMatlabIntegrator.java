@@ -117,14 +117,14 @@ public class MockEventMatlabIntegrator {
     public void notifyMatLabLogInEvent(LoginResponse response){
     	MatlabOnLoginEvent event = new MatlabOnLoginEvent(this, response);
     	for(int i = 0, n = data.size(); i < n; i++){
-    		((MatlabEventListener)data.elementAt(i)).matLabOnLoginEvent(event);
+    		((MatlabEventListener)data.elementAt(i)).matlabOnLoginEvent(event);
     	}
     }
     
     public void notifyMatLabOnSubscribeEvent(SubscribeMarketDataResponse response){
     	MatlabOnSubscribeDataEvent event = new MatlabOnSubscribeDataEvent(this, response);
     	for(int i = 0, n = data.size(); i < n; i++){
-    		((MatlabEventListener)data.elementAt(i)).matLabOnSubscribeDataEvent(event);
+    		((MatlabEventListener)data.elementAt(i)).matlabOnSubscribeDataEvent(event);
     	}
     }
 

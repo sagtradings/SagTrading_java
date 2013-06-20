@@ -55,13 +55,13 @@ public class EventMatlabIntegrator {
 				
 				BarData compiledData = barManager.sendMarketData(response);
 				if(compiledData != null){
-					notifyMatLabBarData(compiledData);
+					notifyMatlabBarData(compiledData);
 				}
 			} catch (EntryNotInitializedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			notifyMatLabLabTickEvent(response);
+			notifyMatlabLabTickEvent(response);
 		}
 		
 	}
@@ -92,16 +92,16 @@ public class EventMatlabIntegrator {
 	
 	private java.util.Vector data = new java.util.Vector();
 	
-    public synchronized void addMatLabEventListener(MatlabEventListener lis) {
+    public synchronized void addMatlabEventListener(MatlabEventListener lis) {
         data.addElement(lis);
     }
-    public synchronized void removeMatLabEventListener(MatlabEventListener lis) {
+    public synchronized void removeMatlabEventListener(MatlabEventListener lis) {
        
     	data.removeElement(lis);
     }
     
 
-    public void notifyMatLabLabTickEvent(MarketDataResponse response){
+    public void notifyMatlabLabTickEvent(MarketDataResponse response){
         java.util.Vector dataCopy;
         synchronized(this) {
             dataCopy = (java.util.Vector)data.clone();
@@ -112,7 +112,7 @@ public class EventMatlabIntegrator {
         }
     }
 
-    public void notifyMatLabBarData(BarData barData) {
+    public void notifyMatlabBarData(BarData barData) {
         java.util.Vector dataCopy;
         synchronized(this) {
             dataCopy = (java.util.Vector)data.clone();

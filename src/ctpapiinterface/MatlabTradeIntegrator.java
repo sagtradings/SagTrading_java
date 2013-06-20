@@ -98,13 +98,13 @@ public class MatlabTradeIntegrator {
 		@Override
 		public void onRspError(ErrorResult errorRslt) {
 			MatlabOnRtnErrorEvent errorEvent = new MatlabOnRtnErrorEvent(this, errorRslt);
-			notifyMatLabOnRtnErrorEvent(errorEvent);
+			notifyMatlabOnRtnErrorEvent(errorEvent);
 		}
 
 		@Override
 		public void onRtnOrder(OrderInsertResponse response) {
 			MatlabOnRtnOrderEvent orderEvent = new MatlabOnRtnOrderEvent(this, response);
-			notifyMatLabOnRtnOrderEvent(orderEvent);
+			notifyMatlabOnRtnOrderEvent(orderEvent);
 		}
 
 		@Override
@@ -128,13 +128,13 @@ public class MatlabTradeIntegrator {
 			}
 			
 			MatlabOnRtnTradeEvent tradeEvent = new MatlabOnRtnTradeEvent(this, response);
-			notifyMatLabOnRtnTradeEvent(tradeEvent);
+			notifyMatlabOnRtnTradeEvent(tradeEvent);
 		}
 
 		@Override
 		public void onRspUserLogin(LoginResponse loginResponse) {
 			OrderRefGenerator.getInstance().setInitialValue(loginResponse.getMaxOrder());
-			notifyMatLabOnLoginEvent(new MatlabOnLoginEvent(loginResponse));
+			notifyMatlabOnLoginEvent(new MatlabOnLoginEvent(loginResponse));
 		}
 		
 	}
@@ -184,35 +184,35 @@ public class MatlabTradeIntegrator {
 		
 	}
 	
-	public void addMatLabTradeListener(MatlabTradeListener tradeListener){
+	public void addMatlabTradeListener(MatlabTradeListener tradeListener){
 		matLabListeners.add(tradeListener);
 	}
 	
-	public void removeMatLabTradeListener(MatlabTradeListener tradeListener){
+	public void removeMatlabTradeListener(MatlabTradeListener tradeListener){
 		matLabListeners.remove(tradeListener);
 	}
 	
-	public void notifyMatLabOnRtnErrorEvent(MatlabOnRtnErrorEvent errorEvent){
+	public void notifyMatlabOnRtnErrorEvent(MatlabOnRtnErrorEvent errorEvent){
 		for(int i = 0, n = matLabListeners.size(); i  < n; i++){
-			matLabListeners.get(i).matLabOnRtnErrorEvent(errorEvent);
+			matLabListeners.get(i).matlabOnRtnErrorEvent(errorEvent);
 		}
 	}
 	
-	public void notifyMatLabOnLoginEvent(MatlabOnLoginEvent loginEvent){
+	public void notifyMatlabOnLoginEvent(MatlabOnLoginEvent loginEvent){
 		for(int i = 0, n = matLabListeners.size(); i  < n; i++){
-			matLabListeners.get(i).matLabOnLoginEvent(loginEvent);
+			matLabListeners.get(i).matlabOnLoginEvent(loginEvent);
 		}
 	}
 	
-	public void notifyMatLabOnRtnOrderEvent(MatlabOnRtnOrderEvent orderEvent){
+	public void notifyMatlabOnRtnOrderEvent(MatlabOnRtnOrderEvent orderEvent){
 		for(int i = 0, n = matLabListeners.size(); i < n; i++){
-			matLabListeners.get(i).matLabOnRtnOrderEvent(orderEvent);
+			matLabListeners.get(i).matlabOnRtnOrderEvent(orderEvent);
 		}
 	}
 	
-	public void notifyMatLabOnRtnTradeEvent(MatlabOnRtnTradeEvent tradeEvent){
+	public void notifyMatlabOnRtnTradeEvent(MatlabOnRtnTradeEvent tradeEvent){
 		for(int i = 0, n = matLabListeners.size(); i < n; i++){
-			matLabListeners.get(i).matLabOnRtnTradeEvent(tradeEvent);
+			matLabListeners.get(i).matlabOnRtnTradeEvent(tradeEvent);
 		}
 	}
 	
