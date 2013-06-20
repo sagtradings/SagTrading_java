@@ -5,69 +5,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
+
+import bo.TradeRequest;
 
 public class OrderRepository {
 	
-	private class ICBucketKey{
-		private String instrumentId;
-		private String originatingOrderRef;
-		public ICBucketKey(String instrumentId, String originatingOrderRef) {
-			super();
-			this.instrumentId = instrumentId;
-			this.originatingOrderRef = originatingOrderRef;
-		}
-		public String getInstrumentId() {
-			return instrumentId;
-		}
-		public void setInstrumentId(String instrumentId) {
-			this.instrumentId = instrumentId;
-		}
-		public String getOriginatingOrderRef() {
-			return originatingOrderRef;
-		}
-		public void setOriginatingOrderRef(String originatingOrderRef) {
-			this.originatingOrderRef = originatingOrderRef;
-		}
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + getOuterType().hashCode();
-			result = prime * result
-					+ ((instrumentId == null) ? 0 : instrumentId.hashCode());
-			result = prime
-					* result
-					+ ((originatingOrderRef == null) ? 0 : originatingOrderRef
-							.hashCode());
-			return result;
-		}
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			ICBucketKey other = (ICBucketKey) obj;
-			if (!getOuterType().equals(other.getOuterType()))
-				return false;
-			if (instrumentId == null) {
-				if (other.instrumentId != null)
-					return false;
-			} else if (!instrumentId.equals(other.instrumentId))
-				return false;
-			if (originatingOrderRef == null) {
-				if (other.originatingOrderRef != null)
-					return false;
-			} else if (!originatingOrderRef.equals(other.originatingOrderRef))
-				return false;
-			return true;
-		}
-		private OrderRepository getOuterType() {
-			return OrderRepository.this;
-		}
-	}
+
 	
 	private static  OrderRepository instance;
 	
@@ -80,7 +24,7 @@ public class OrderRepository {
 		return instance;
 	}
 	
-	private Map<ICBucketKey, OrderBucket> activeOrders = new HashMap<ICBucketKey, OrderBucket>(10);
+	private Map<String, List<OrderBucket>> activeOrders = new HashMap<String, List<OrderBucket>>(10);
 	public void addOrderBucket(String instrument, OrderBucket bucket) throws IncompleteBucketException{
 		if(bucket == null){
 			throw new IncompleteBucketException("Order bucket can not be null");
@@ -89,39 +33,91 @@ public class OrderRepository {
 		if(bucket.getInitialRequest() == null){
 			throw new IncompleteBucketException("No Initial Order for bucket");
 		}
-		
-		activeOrders.put(new ICBucketKey(instrument, bucket.getInitialRequest().getOrderRef()), bucket);
+		List<OrderBucket> currentList = activeOrders.get(instrument);
+		if(currentList == null){
+			currentList = new Vector<OrderBucket>(10);
+		}
+		currentList.add(bucket);
+		activeOrders.put(instrument, currentList);
 	}
 	
-	public void addOrderBucket(String instrument, String origRef, OrderBucket bucket) throws IncompleteBucketException{
-		if(bucket == null){
-			throw new IncompleteBucketException("Order bucket can not be null");
-		}
-
-		if(bucket.getInitialRequest() == null){
-			throw new IncompleteBucketException("No Initial Order for bucket");
-		}
-		
-		activeOrders.put(new ICBucketKey(instrument, origRef),  bucket);
-	}
 	
 	public void removeOrder(String instrument, String originatingRef){
-		activeOrders.remove(new ICBucketKey(instrument, originatingRef));
+		List<OrderBucket> orderList = activeOrders.get(instrument);
+		for(int i = 0, n = orderList.size(); i < n; i++){
+			if(orderList.get(i).getInitialRequest().getOrderRef().equals(instrument)){
+				orderList.remove(i);
+			}
+		}
 	}
 	
-	public OrderBucket getOrderBucket(String instrument, String originatingRef){
-		return activeOrders.get(new ICBucketKey(instrument, originatingRef));
+	public List<OrderBucket> getOrderBuckets(String instrument){
+		return activeOrders.get(instrument);
 	}
 	
-	public List<OrderBucket> getOrdersForInsturment(String insturment){
-		Iterator<ICBucketKey> keys = activeOrders.keySet().iterator();
+	public OrderBucket getBucketForOrigOrder(String orderRef){
+		Iterator<String> itt = activeOrders.keySet().iterator();
+		while(itt.hasNext()){
+			List<OrderBucket> subList = activeOrders.get(itt.next());
+			for(int i = 0, n = subList.size(); i < n; i++){
+				if(subList.get(i).getInitialRequest().getOrderRef().equals(orderRef)){
+					return subList.get(i);
+				}
+			}
+		}
+		return null;
+	}
+	
+	public OrderBucket getBucketForExitOrder(String orderRef){
+		Iterator<String> itt = activeOrders.keySet().iterator();
+		while(itt.hasNext()){
+			List<OrderBucket> subList = activeOrders.get(itt.next());
+			for(int i = 0, n = subList.size(); i < n; i++){
+				if(subList.get(i).getExitRequest().getOrderRef().equals(orderRef)){
+					return subList.get(i);
+				}
+			}
+		}
+		return null;
+	}
+	
+	public OrderBucket getBucketForStopLossOrder(String orderRef){
+		Iterator<String> itt = activeOrders.keySet().iterator();
+		while(itt.hasNext()){
+			List<OrderBucket> subList = activeOrders.get(itt.next());
+			for(int i = 0, n = subList.size(); i < n; i++){
+				if(subList.get(i).getStopLossRequest().getOrderRef().equals(orderRef)){
+					return subList.get(i);
+				}
+			}
+		}
+		return null;
+	}
+	
+	public List<OrderBucket> searchBucketsOnState(String instrument, OrderBucket.orderStates state){
 		List<OrderBucket> answer = new ArrayList<OrderBucket>(10);
-		while(keys.hasNext()){
-			ICBucketKey nextKey = keys.next();
-			if(nextKey.getInstrumentId().equals(insturment)){
-				answer.add(activeOrders.get(nextKey));
+		List<OrderBucket> subList = activeOrders.get(instrument);
+		for(int i = 0, n = subList.size(); i < n; i++){
+			if(subList.get(i).getOrderState() == state){
+				answer.add(subList.get(i));
 			}
 		}
 		return answer;
+	}
+	
+	public OrderBucket searchBucket(String orderRef){
+		Iterator<List<OrderBucket>> itt = activeOrders.values().iterator();
+		while(itt.hasNext()){
+			List<OrderBucket> buckets = itt.next();
+			for(int i = 0, n = buckets.size(); i < n; i++){
+				TradeRequest init = buckets.get(i).getInitialRequest();
+				TradeRequest exit = buckets.get(i).getExitRequest();
+				TradeRequest stop = buckets.get(i).getStopLossRequest();
+				if(init.getOrderRef().equals(orderRef) || exit.getOrderRef().equals(orderRef) || stop.getOrderRef().equals(orderRef)){
+					return buckets.get(i);
+				}
+			}
+		}
+		return null;
 	}
 }

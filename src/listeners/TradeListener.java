@@ -37,7 +37,8 @@ public class TradeListener extends DefaultCTPListener {
 		String instrument = response.getInstrumentID();
 		String originatingOrderRef = response.getOrderRef();
 		OrderRepository repository = OrderRepository.getInstance();
-		OrderBucket bucket = repository.getOrderBucket(instrument, originatingOrderRef);
+		
+		OrderBucket bucket = repository.searchBucket(originatingOrderRef);
 		EPServiceProvider epService = EPServiceProviderManager.getDefaultProvider();
 		EPRuntime runtime = epService.getEPRuntime();
 		if(bucket.getOrderState() == OrderBucket.orderStates.INITIAL_REQUEST){
