@@ -2,12 +2,12 @@ package matlab;
 
 import bo.ErrorResult;
 
-public class MatLabOnRtnErrorEvent extends java.util.EventObject{
+public class MatlabOnRtnErrorEvent extends java.util.EventObject{
 
 	
 	private ErrorResult delegate;
 	
-	public MatLabOnRtnErrorEvent(Object source, ErrorResult delegate){
+	public MatlabOnRtnErrorEvent(Object source, ErrorResult delegate){
 		super(source);
 		this.delegate = delegate;
 	}
@@ -28,7 +28,7 @@ public class MatLabOnRtnErrorEvent extends java.util.EventObject{
 		delegate.setErrorMessage(errorMessage);
 	}
 
-	public MatLabOnRtnErrorEvent(Object source) {
+	public MatlabOnRtnErrorEvent(Object source) {
 		super(source);
 		// TODO Auto-generated constructor stub
 	}

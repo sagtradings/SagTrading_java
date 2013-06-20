@@ -4,15 +4,15 @@ import java.util.EventObject;
 
 import bo.SubscribeMarketDataResponse;
 
-public class MatLabOnSubscribeDataEvent extends EventObject {
+public class MatlabOnSubscribeDataEvent extends EventObject {
 	private SubscribeMarketDataResponse delegate;
 	private long creationTimeStamp;
-	public MatLabOnSubscribeDataEvent(Object source) {
+	public MatlabOnSubscribeDataEvent(Object source) {
 		super(source);
 		// TODO Auto-generated constructor stub
 	}
 	
-	public MatLabOnSubscribeDataEvent(Object source, SubscribeMarketDataResponse delegate){
+	public MatlabOnSubscribeDataEvent(Object source, SubscribeMarketDataResponse delegate){
 		super(source);
 		this.delegate = delegate;
 		this.creationTimeStamp = creationTimeStamp;

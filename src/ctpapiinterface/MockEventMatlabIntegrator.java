@@ -1,11 +1,11 @@
-package main;
+package ctpapiinterface;
 
 import listeners.DefaultCTPListener;
 import matlab.BarDataEvent;
 import matlab.MarketDataEvent;
-import matlab.MatLabEventListener;
-import matlab.MatLabOnLoginEvent;
-import matlab.MatLabOnSubscribeDataEvent;
+import matlab.MatlabEventListener;
+import matlab.MatlabOnLoginEvent;
+import matlab.MatlabOnSubscribeDataEvent;
 import nativeinterfaces.MockMDNativeInterface;
 
 import org.apache.log4j.Logger;
@@ -18,9 +18,9 @@ import bo.MarketDataResponse;
 import bo.SubscribeMarketDataResponse;
 
 
-public class MockEventMatLabIntegrator {
-	 private static Logger log = Logger.getLogger(MockEventMatLabIntegrator.class);
-	public MockEventMatLabIntegrator(){
+public class MockEventMatlabIntegrator {
+	 private static Logger log = Logger.getLogger(MockEventMatlabIntegrator.class);
+	public MockEventMatlabIntegrator(){
 
 
 	}
@@ -94,10 +94,10 @@ public class MockEventMatLabIntegrator {
 	
 	private java.util.Vector data = new java.util.Vector();
 	
-    public synchronized void addMatLabEventListener(MatLabEventListener lis) {
+    public synchronized void addMatLabEventListener(MatlabEventListener lis) {
         data.addElement(lis);
     }
-    public synchronized void removeMatLabEventListener(MatLabEventListener lis) {
+    public synchronized void removeMatLabEventListener(MatlabEventListener lis) {
        
     	data.removeElement(lis);
     }
@@ -110,21 +110,21 @@ public class MockEventMatLabIntegrator {
         }
         for (int i=0; i<dataCopy.size(); i++) {
             MarketDataEvent event = new  MarketDataEvent(this, response);
-              ((MatLabEventListener)dataCopy.elementAt(i)).marketDataEvent(event);
+              ((MatlabEventListener)dataCopy.elementAt(i)).marketDataEvent(event);
         }
     }
     
     public void notifyMatLabLogInEvent(LoginResponse response){
-    	MatLabOnLoginEvent event = new MatLabOnLoginEvent(this, response);
+    	MatlabOnLoginEvent event = new MatlabOnLoginEvent(this, response);
     	for(int i = 0, n = data.size(); i < n; i++){
-    		((MatLabEventListener)data.elementAt(i)).matLabOnLoginEvent(event);
+    		((MatlabEventListener)data.elementAt(i)).matLabOnLoginEvent(event);
     	}
     }
     
     public void notifyMatLabOnSubscribeEvent(SubscribeMarketDataResponse response){
-    	MatLabOnSubscribeDataEvent event = new MatLabOnSubscribeDataEvent(this, response);
+    	MatlabOnSubscribeDataEvent event = new MatlabOnSubscribeDataEvent(this, response);
     	for(int i = 0, n = data.size(); i < n; i++){
-    		((MatLabEventListener)data.elementAt(i)).matLabOnSubscribeDataEvent(event);
+    		((MatlabEventListener)data.elementAt(i)).matLabOnSubscribeDataEvent(event);
     	}
     }
 
@@ -135,7 +135,7 @@ public class MockEventMatLabIntegrator {
         }
         for (int i=0; i<dataCopy.size(); i++) {
             BarDataEvent event = new  BarDataEvent(this, barData);
-              ((MatLabEventListener)dataCopy.elementAt(i)).barDataEvent(event);
+              ((MatlabEventListener)dataCopy.elementAt(i)).barDataEvent(event);
         }
     }
     

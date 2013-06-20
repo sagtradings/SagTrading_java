@@ -4,7 +4,7 @@ import java.util.EventObject;
 
 import bo.LoginResponse;
 
-public class MatLabOnLoginEvent extends EventObject {
+public class MatlabOnLoginEvent extends EventObject {
 	private LoginResponse delegate;
 	private long creationTimeStamp;
 	public int getMaxOrder() {
@@ -16,12 +16,12 @@ public class MatLabOnLoginEvent extends EventObject {
 		return creationTimeStamp;
 	}
 
-	public MatLabOnLoginEvent(Object source) {
+	public MatlabOnLoginEvent(Object source) {
 		super(source);
 		// TODO Auto-generated constructor stub
 	}
 	
-	public MatLabOnLoginEvent(Object source, LoginResponse delegate){
+	public MatlabOnLoginEvent(Object source, LoginResponse delegate){
 		super(source);
 		this.delegate = delegate;
 		this.creationTimeStamp = System.currentTimeMillis();

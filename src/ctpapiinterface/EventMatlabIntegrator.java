@@ -1,4 +1,4 @@
-package main;
+package ctpapiinterface;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -7,7 +7,7 @@ import java.util.Date;
 import listeners.DefaultCTPListener;
 import matlab.BarDataEvent;
 import matlab.MarketDataEvent;
-import matlab.MatLabEventListener;
+import matlab.MatlabEventListener;
 import nativeinterfaces.MarketDataNativeInterface;
 import bardatamanager.BarDataManager;
 import bardatamanager.EntryNotInitializedException;
@@ -15,14 +15,14 @@ import bo.BarData;
 import bo.MarketDataResponse;
 
 
-public class EventMatLabIntegrator {
+public class EventMatlabIntegrator {
 	
 	static{
 		System.loadLibrary("CTPDLL");
 		
 	}
 	
-	public EventMatLabIntegrator(){
+	public EventMatlabIntegrator(){
 
 		
 
@@ -92,10 +92,10 @@ public class EventMatLabIntegrator {
 	
 	private java.util.Vector data = new java.util.Vector();
 	
-    public synchronized void addMatLabEventListener(MatLabEventListener lis) {
+    public synchronized void addMatLabEventListener(MatlabEventListener lis) {
         data.addElement(lis);
     }
-    public synchronized void removeMatLabEventListener(MatLabEventListener lis) {
+    public synchronized void removeMatLabEventListener(MatlabEventListener lis) {
        
     	data.removeElement(lis);
     }
@@ -108,7 +108,7 @@ public class EventMatLabIntegrator {
         }
         for (int i=0; i<dataCopy.size(); i++) {
             MarketDataEvent event = new  MarketDataEvent(this, response);
-              ((MatLabEventListener)dataCopy.elementAt(i)).marketDataEvent(event);
+              ((MatlabEventListener)dataCopy.elementAt(i)).marketDataEvent(event);
         }
     }
 
@@ -119,7 +119,7 @@ public class EventMatLabIntegrator {
         }
         for (int i=0; i<dataCopy.size(); i++) {
             BarDataEvent event = new  BarDataEvent(this, barData);
-              ((MatLabEventListener)dataCopy.elementAt(i)).barDataEvent(event);
+              ((MatlabEventListener)dataCopy.elementAt(i)).barDataEvent(event);
         }
     }
 

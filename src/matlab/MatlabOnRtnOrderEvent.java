@@ -2,7 +2,7 @@ package matlab;
 
 import bo.OrderInsertResponse;
 
-public class MatLabOnRtnOrderEvent extends java.util.EventObject{
+public class MatlabOnRtnOrderEvent extends java.util.EventObject{
 
 	private OrderInsertResponse delegate;
 
@@ -463,12 +463,12 @@ public class MatLabOnRtnOrderEvent extends java.util.EventObject{
 		delegate.setSwapOrder(swapOrder);
 	}
 
-	public MatLabOnRtnOrderEvent(Object source, OrderInsertResponse delegate){
+	public MatlabOnRtnOrderEvent(Object source, OrderInsertResponse delegate){
 		super(source);
 		this.delegate = delegate;
 	}
 	
-	public MatLabOnRtnOrderEvent(Object source) {
+	public MatlabOnRtnOrderEvent(Object source) {
 		super(source);
 		// TODO Auto-generated constructor stub
 	}

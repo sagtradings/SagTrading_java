@@ -2,7 +2,7 @@ package matlab;
 
 import bo.TradeDataResponse;
 
-public class MatLabOnRtnTradeEvent extends java.util.EventObject{
+public class MatlabOnRtnTradeEvent extends java.util.EventObject{
 	private TradeDataResponse delegate;
 
 	
@@ -246,12 +246,12 @@ public class MatLabOnRtnTradeEvent extends java.util.EventObject{
 		delegate.setVolume(volume);
 	}
 	
-	public MatLabOnRtnTradeEvent(Object source, TradeDataResponse delegate){
+	public MatlabOnRtnTradeEvent(Object source, TradeDataResponse delegate){
 		super(source);
 		this.delegate = delegate;
 	}
 	
-	public MatLabOnRtnTradeEvent(Object source) {
+	public MatlabOnRtnTradeEvent(Object source) {
 		super(source);
 		// TODO Auto-generated constructor stub
 	}
