@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import listeners.DefaultCTPListener;
-import listeners.StopLossListener;
 import matlab.MatlabOnLoginEvent;
 import matlab.MatlabOnOrderActionEvent;
 import matlab.MatlabOnRtnErrorEvent;
@@ -27,8 +26,6 @@ import bo.OrderActionRequest;
 import bo.OrderInsertResponse;
 import bo.TradeDataResponse;
 import bo.TradeRequest;
-
-
 import factories.OrderActionFactory;
 import factories.TradeRequestFactory;
 

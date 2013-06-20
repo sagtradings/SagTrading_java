@@ -6,12 +6,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import bardatamanager.EntryNotInitializedException;
 import bo.BarData;
 import bo.ErrorResult;
 import bo.MarketDataResponse;
 import bo.SubscribeMarketDataResponse;
-import org.apache.log4j.Logger;
 
 public final class NonEsperMarketDataListener extends DefaultCTPListener {
     private static Logger log = Logger.getLogger(NonEsperMarketDataListener.class);

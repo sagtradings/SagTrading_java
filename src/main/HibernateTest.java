@@ -4,11 +4,12 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import bo.BarData;
-import dao.BarDataDAO;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+
+import bo.BarData;
+import dao.BarDataDAO;
 
 
 public class HibernateTest {

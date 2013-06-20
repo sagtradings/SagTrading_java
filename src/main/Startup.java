@@ -2,11 +2,11 @@ package main;
 
 
 
-import org.apache.log4j.Logger;
-
 import listeners.DefaultCTPListener;
 import listeners.NonEsperMarketDataListener;
 import nativeinterfaces.MarketDataNativeInterface;
+
+import org.apache.log4j.Logger;
 
 public class Startup {
 	

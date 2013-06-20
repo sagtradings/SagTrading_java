@@ -2,12 +2,13 @@ package dao;
 
 import java.util.List;
 
-import bo.BarData;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+
+import bo.BarData;
 
 
 public class BarDataDAO {
