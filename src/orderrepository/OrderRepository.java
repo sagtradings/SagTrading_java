@@ -25,7 +25,7 @@ public class OrderRepository {
 	}
 	
 	private Map<String, List<OrderBucket>> activeOrders = new HashMap<String, List<OrderBucket>>(10);
-	public void addOrderBucket(String instrument, OrderBucket bucket) throws IncompleteBucketException{
+	public  void addOrderBucket(String instrument, OrderBucket bucket) throws IncompleteBucketException{
 		if(bucket == null){
 			throw new IncompleteBucketException("Order bucket can not be null");
 		}
@@ -51,11 +51,11 @@ public class OrderRepository {
 		}
 	}
 	
-	public List<OrderBucket> getOrderBuckets(String instrument){
+	public synchronized List<OrderBucket> getOrderBuckets(String instrument){
 		return activeOrders.get(instrument);
 	}
 	
-	public OrderBucket getBucketForOrigOrder(String orderRef){
+	public synchronized OrderBucket getBucketForOrigOrder(String orderRef){
 		Iterator<String> itt = activeOrders.keySet().iterator();
 		while(itt.hasNext()){
 			List<OrderBucket> subList = activeOrders.get(itt.next());
@@ -68,7 +68,7 @@ public class OrderRepository {
 		return null;
 	}
 	
-	public OrderBucket getBucketForExitOrder(String orderRef){
+	public synchronized OrderBucket getBucketForExitOrder(String orderRef){
 		Iterator<String> itt = activeOrders.keySet().iterator();
 		while(itt.hasNext()){
 			List<OrderBucket> subList = activeOrders.get(itt.next());
@@ -81,7 +81,7 @@ public class OrderRepository {
 		return null;
 	}
 	
-	public OrderBucket getBucketForStopLossOrder(String orderRef){
+	public synchronized OrderBucket getBucketForStopLossOrder(String orderRef){
 		Iterator<String> itt = activeOrders.keySet().iterator();
 		while(itt.hasNext()){
 			List<OrderBucket> subList = activeOrders.get(itt.next());
@@ -94,7 +94,7 @@ public class OrderRepository {
 		return null;
 	}
 	
-	public List<OrderBucket> searchBucketsOnState(String instrument, OrderBucket.orderStates state){
+	public synchronized List<OrderBucket> searchBucketsOnState(String instrument, OrderBucket.orderStates state){
 		List<OrderBucket> answer = new ArrayList<OrderBucket>(10);
 		List<OrderBucket> subList = activeOrders.get(instrument);
 		for(int i = 0, n = subList.size(); i < n; i++){
@@ -105,7 +105,7 @@ public class OrderRepository {
 		return answer;
 	}
 	
-	public OrderBucket searchBucket(String orderRef){
+	public synchronized OrderBucket searchBucket(String orderRef){
 		Iterator<List<OrderBucket>> itt = activeOrders.values().iterator();
 		while(itt.hasNext()){
 			List<OrderBucket> buckets = itt.next();
@@ -121,7 +121,7 @@ public class OrderRepository {
 		return null;
 	}
 	
-	public List<OrderBucket> getAllBucketsByState(OrderBucket.orderStates state){
+	public synchronized List<OrderBucket> getAllBucketsByState(OrderBucket.orderStates state){
 		List<OrderBucket> answer = new ArrayList<OrderBucket>(10);
 		Iterator<String> itt = activeOrders.keySet().iterator();
 		while(itt.hasNext()){

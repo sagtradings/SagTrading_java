@@ -6,6 +6,7 @@ import java.util.List;
 import listeners.DefaultCTPListener;
 import listeners.StopLossListener;
 import matlab.MatlabOnLoginEvent;
+import matlab.MatlabOnOrderActionEvent;
 import matlab.MatlabOnRtnErrorEvent;
 import matlab.MatlabOnRtnOrderEvent;
 import matlab.MatlabOnRtnTradeEvent;
@@ -87,6 +88,15 @@ public class MatlabTradeIntegrator {
 		
 	}
 	
+	public void cancelOrder(String orderRef){
+		OrderActionFactory factory = new OrderActionFactory();
+		OrderBucket bucket = OrderRepository.getInstance().getBucketForOrigOrder(orderRef);
+		TradeRequest initialRequest = bucket.getInitialRequest();
+		OrderActionRequest request = factory.createOrderActionRequest(initialRequest.getInstrumentID(), initialRequest.getOrderRef());
+		bucket.setOrderState(OrderBucket.orderStates.CANCELLED_BY_TRADER);
+		new TradingNativeInterface().sendOrderAction("1013", "123321", "00000008", request);
+	}
+	
 	public String sendSingleOrder(String direction, String  instrument, double price){
 		String nextOrder = OrderRefGenerator.getInstance().getNextRef();
 		TradeRequestFactory factory = new TradeRequestFactory();
@@ -121,7 +131,8 @@ public class MatlabTradeIntegrator {
 		@Override
 		public void onOrderActionResponse(OrderActionRequest initiatingAction) {
 			// TODO Auto-generated method stub
-			super.onOrderActionResponse(initiatingAction);
+			MatlabOnOrderActionEvent actionEvent = new MatlabOnOrderActionEvent(this, initiatingAction);
+			notifyMatlabOnOrderActionEvent(actionEvent);
 		}
 
 		@Override
@@ -248,6 +259,12 @@ public class MatlabTradeIntegrator {
 		for(int i = 0, n = matLabListeners.size(); i < n; i++){
 			matLabListeners.get(i).matlabOnRtnTradeEvent(tradeEvent);
 		}
+	}
+	
+	public void notifyMatlabOnOrderActionEvent(MatlabOnOrderActionEvent actionEvent){
+		for(int i = 0, n = matLabListeners.size(); i < n; i++){
+			matLabListeners.get(i).matlabOnOrderActionEvent(actionEvent);
+	}
 	}
 	
 }

@@ -9,7 +9,8 @@ public class OrderBucket {
 		EXIT_REQUEST, 
 		CYCLE_COMPLETED,
 		STOP_LOSS_COMPLETED,
-		ORDER_TIMEOUT}
+		ORDER_TIMEOUT,
+		CANCELLED_BY_TRADER}
 	
 	private TradeRequest initialRequest;
 	private TradeRequest exitRequest;
