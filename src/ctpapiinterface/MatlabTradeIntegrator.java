@@ -219,17 +219,28 @@ public class MatlabTradeIntegrator {
 
 	}
 	
-	public void sendOrder(String brokerId, String password, String investorId, String instrumentId, OrderBucket orderBucket){
+	public String sendOrder(String orderType, double price, String instrumentId, long timeOut){
+		String initOrderRef = OrderRefGenerator.getInstance().getNextRef();
 		try {
-			orderBucket.setOrderState(OrderBucket.orderStates.INITIAL_REQUEST);
-			OrderRepository.getInstance().addOrderBucket(instrumentId, orderBucket);
-			TRADING_NATIVE_INTERFACE.sendTradeRequest(brokerId, password, investorId, orderBucket.getInitialRequest());
 			
+			TradeRequestFactory factory = new TradeRequestFactory();
+			TradeRequest initialRequest = factory.createRequest(instrumentId, price, orderType);
+			initialRequest.setOrderRef(initOrderRef);
+			initialRequest.setOriginatingOrderRef(initOrderRef);
+			initialRequest.setRequestID(MessageIDGenerator.getInstance().getNextID());
+			OrderBucket bucket = new OrderBucket();
+			bucket.setTimeOut(timeOut);
+			bucket.setOrderState(OrderBucket.orderStates.INITIAL_REQUEST);
+			bucket.setInitialRequest(initialRequest);
+			OrderRepository.getInstance().addOrderBucket(instrumentId, bucket);
+			TRADING_NATIVE_INTERFACE.sendTradeRequest("1013", "123321", "00000008", bucket.getInitialRequest());
+			new MarketDataNativeInterface().sendQuoteRequest(new String[]{instrumentId});
+
 		} catch (IncompleteBucketException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		return initOrderRef;
 	}
 	
 	public void addMatlabTradeListener(MatlabTradeListener tradeListener){
