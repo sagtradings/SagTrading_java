@@ -2,10 +2,9 @@ package orderrepository;
 
 import java.util.List;
 
+import nativeinterfaces.TradingNativeInterface;
 import bo.OrderActionRequest;
 import factories.OrderActionFactory;
-
-import nativeinterfaces.TradingNativeInterface;
 
 public class OrderTimeOutThread implements Runnable{
 
