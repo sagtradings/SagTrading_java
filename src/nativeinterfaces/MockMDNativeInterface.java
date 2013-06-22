@@ -78,6 +78,9 @@ public class MockMDNativeInterface extends MarketDataNativeInterface{
 	 public final int UP_VOLUME = 44;
 	 public final int VOLUME = 45;
 	 private List<MarketDataResponse> testData;
+	 
+	 private Timer mdMarketDataCompiler;
+	 
 	 public MockMDNativeInterface(String fileHandle){
 
 		 String line;
@@ -161,7 +164,7 @@ public class MockMDNativeInterface extends MarketDataNativeInterface{
 			 }
 
 		 });
-		 new Timer(1000, new ActionListener(){
+		 mdMarketDataCompiler = new Timer(1000, new ActionListener(){
 
 			 @Override
 			 public void actionPerformed(ActionEvent arg0) {
@@ -183,10 +186,14 @@ public class MockMDNativeInterface extends MarketDataNativeInterface{
 
 			 }
 
-		 }).start();
+		 });
 
 	 }
 	
+	public void initiateTimer(){
+		mdMarketDataCompiler.start();
+	}
+	 
 	@Override
 	public void subscribeListener(DefaultCTPListener obj) {
 		listeners.add(obj);

@@ -5,6 +5,7 @@ import java.util.List;
 
 import listeners.DefaultCTPListener;
 import bo.LoginResponse;
+import bo.MarketDataResponse;
 import bo.OrderActionRequest;
 import bo.OrderInsertResponse;
 import bo.SettlementResponse;
@@ -13,8 +14,56 @@ import bo.TradeRequest;
 
 public class MockTradingInterface extends TradingNativeInterface {
 	private List<DefaultCTPListener> listeners = new ArrayList<DefaultCTPListener>(10);
+	private MockMDNativeInterface mdInterface;
+	private List<TradeRequest> tradeQueue = new ArrayList<TradeRequest>(10);
+	
+	private class ICmdListener extends DefaultCTPListener{
+
+		@Override
+		public void onRtnDepthMarketData(MarketDataResponse response) {
+			List<TradeRequest> newList = new ArrayList<TradeRequest>(tradeQueue.size());
+			List<TradeDataResponse> confirmedTrades = new ArrayList<TradeDataResponse>(tradeQueue.size());
+			for(int i = 0, n = tradeQueue.size(); i < n; i++){
+				TradeRequest tradeRequest = tradeQueue.get(0);
+				TradeDataResponse mockTradeInsert = new TradeDataResponse();
+				mockTradeInsert.setBrokerID(tradeRequest.getBrokerID());
+				mockTradeInsert.setBusinessUnit(tradeRequest.getBusinessUnit());
+				mockTradeInsert.setDirection(tradeRequest.getDirection());
+				mockTradeInsert.setInstrumentID(tradeRequest.getInstrumentID());
+				mockTradeInsert.setInvestorID(tradeRequest.getInvestorID());
+				mockTradeInsert.setOrderRef(tradeRequest.getOrderRef());
+				mockTradeInsert.setPrice(response.getLastPrice());
+				mockTradeInsert.setUserID(tradeRequest.getUserID());
+				if(tradeRequest.getLimitPrice() >= response.getLastPrice() && "0".equals(tradeRequest.getDirection())){
+					confirmedTrades.add(mockTradeInsert);
+				}
+				else if(tradeRequest.getLimitPrice() <= response.getLastPrice() && "1".equals(tradeRequest.getDirection())){
+					confirmedTrades.add(mockTradeInsert);
+				}
+				else{
+					newList.add(tradeRequest);
+				}
+				tradeQueue.remove(0);
+			}
+			tradeQueue = newList;
+			for(int i = 0, n = confirmedTrades.size(); i < n; i++){
+				for(int j = 0, k = listeners.size(); j < k; j++){
+					listeners.get(j).onRtnTradingData(confirmedTrades.get(i));
+				}
+			}
+			
+		}
+		
+	}
+	
+	public MockTradingInterface(MockMDNativeInterface mdInterface){
+		this.mdInterface = mdInterface;
+	}
+	
 	@Override
 	public void sendLoginMessage(String brokerId, String password, String investorId) {
+		mdInterface.subscribeListener(new ICmdListener());
+		mdInterface.initiateTimer();
 		LoginResponse mockResponse = new LoginResponse();
 		mockResponse.setMaxOrder(1);
 		
@@ -71,48 +120,23 @@ public class MockTradingInterface extends TradingNativeInterface {
 		mockOrderInsert.setStopPrice(request.getStopPrice());
 		mockOrderInsert.setSuspendTime("");
 		mockOrderInsert.setSwapOrder(0);
-		
-		TradeDataResponse mockTradeInsert = new TradeDataResponse();
-		mockTradeInsert.setBrokerID(brokerId);
-		mockTradeInsert.setBrokerOrderSeq(request.getRequestID());
-		mockTradeInsert.setBusinessUnit(request.getBusinessUnit());
-		mockTradeInsert.setClearingPartID("");
-		mockTradeInsert.setClientID("");
-		mockTradeInsert.setDirection(request.getDirection());
-		mockTradeInsert.setExchangeID("");
-		mockTradeInsert.setExchangeInstID("");
+		tradeQueue.add(request);
 
-		mockTradeInsert.setHedgeFlag("");
-		mockTradeInsert.setInstrumentID(request.getInstrumentID());
-		mockTradeInsert.setInvestorID(investorId);
-		mockTradeInsert.setOffsetFlag("");
-		mockTradeInsert.setOrderLocalID("");
-		mockTradeInsert.setOrderRef(request.getOrderRef());
-		mockTradeInsert.setOrderSysID("");
-		mockTradeInsert.setParticipantID("");
-		mockTradeInsert.setPrice(request.getLimitPrice());
-		mockTradeInsert.setPriceSource("");
-		mockTradeInsert.setSequenceNo(0);
-		mockTradeInsert.setSettlementID(0);
-		mockTradeInsert.setTradeDate("");
-		mockTradeInsert.setTradeID("");
-		mockTradeInsert.setTradeSource("");
-		mockTradeInsert.setTradeTime("");
-		mockTradeInsert.setTradeType("");
-		mockTradeInsert.setTradingDay("");
-		mockTradeInsert.setTradingRole("");
-		mockTradeInsert.setUserID(brokerId);
-		mockTradeInsert.setVolume(0);
 		
 		for(int i = 0, n = listeners.size(); i < n ; i++){
 			listeners.get(i).onRtnOrder(mockOrderInsert);
-			listeners.get(i).onRtnTradingData(mockTradeInsert);
 		}
 	}
 
 	@Override
 	public void sendOrderAction(String brokerId, String password,
 			String investorId, OrderActionRequest request) {
+		for(int i = 0, n = tradeQueue.size(); i < n; i++){
+			if(tradeQueue.get(i).getOrderRef().equals(request.getOrderRef())){
+				tradeQueue.remove(i);
+				break;
+			}
+		}
 		for(int i = 0, n = listeners.size(); i < n; i++){
 			listeners.get(i).onOrderActionResponse(request);
 		}
@@ -139,6 +163,10 @@ public class MockTradingInterface extends TradingNativeInterface {
 		for(int i = 0, n = listeners.size(); i < n; i++){
 			listeners.get(i).onSettlementResponse(mockResponse);
 		}
+	}
+	
+	public void kill(){
+		
 	}
 
 }
