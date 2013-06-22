@@ -122,6 +122,13 @@ public class EventMatlabIntegrator {
               ((MatlabEventListener)dataCopy.elementAt(i)).barDataEvent(event);
         }
     }
+    
+    public void release(){
+    	data.removeAllElements();
+    	new MarketDataNativeInterface().unSubscribeListener(null);
+    	System.exit(0);
+    	
+    }
 
     
 

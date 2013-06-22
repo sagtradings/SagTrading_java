@@ -61,6 +61,7 @@ public class MockEventMatlabIntegrator {
 		//nativeInterface.subscribeListener(new ICMDListener());
 		MockMDNativeInterface mockJNI = new MockMDNativeInterface(mockDataFile);
 		mockJNI.subscribeListener(new ICCtpListener());
+		mockJNI.initiateTimer();
 	}
 	
 	public void subscribeMarketData(String instrument){
