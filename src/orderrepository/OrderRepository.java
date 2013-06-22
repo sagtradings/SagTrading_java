@@ -97,6 +97,9 @@ public class OrderRepository {
 	public synchronized List<OrderBucket> searchBucketsOnState(String instrument, OrderBucket.orderStates state){
 		List<OrderBucket> answer = new ArrayList<OrderBucket>(10);
 		List<OrderBucket> subList = activeOrders.get(instrument);
+		if(subList == null){
+			return answer;
+		}
 		for(int i = 0, n = subList.size(); i < n; i++){
 			if(subList.get(i).getOrderState() == state){
 				answer.add(subList.get(i));
