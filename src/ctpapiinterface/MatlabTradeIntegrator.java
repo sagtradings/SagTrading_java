@@ -10,9 +10,11 @@ import matlab.MatlabOnRtnErrorEvent;
 import matlab.MatlabOnRtnOrderEvent;
 import matlab.MatlabOnRtnTradeEvent;
 import matlab.MatlabTradeListener;
+import nativeinterfaces.InterfaceNotCreatedException;
 import nativeinterfaces.MarketDataNativeInterface;
 import nativeinterfaces.MockMDNativeInterface;
 import nativeinterfaces.MockTradingInterface;
+import nativeinterfaces.NativeInterfaceFactory;
 import nativeinterfaces.TradingNativeInterface;
 import orderrefgenerator.MessageIDGenerator;
 import orderrefgenerator.OrderRefGenerator;
@@ -31,10 +33,10 @@ import factories.OrderActionFactory;
 import factories.TradeRequestFactory;
 
 public class MatlabTradeIntegrator {
-	private static final MarketDataNativeInterface MARKET_DATA_NATIVE_INTERFACE = new MockMDNativeInterface("C:\\mddata\\rawdata.csv");
+	private MarketDataNativeInterface marketDataNativeInterface;
 	private static final String INVESTOR_ID = "00000008";
 	private static final String PASS = "123321";
-	private static final TradingNativeInterface TRADING_NATIVE_INTERFACE = new MockTradingInterface((MockMDNativeInterface) MARKET_DATA_NATIVE_INTERFACE);
+	private TradingNativeInterface tradingNativeInterface;
 	private static final String BROKER_ID = "1013";
 	static{
 		System.loadLibrary("CTPDLL");
@@ -44,12 +46,19 @@ public class MatlabTradeIntegrator {
 	
 
 	
-	public MatlabTradeIntegrator(){
+	public MatlabTradeIntegrator(int debugFlag, String mockDataPath){
+		marketDataNativeInterface = NativeInterfaceFactory.getInstance().createMDInterface(debugFlag, mockDataPath);
+		try {
+			tradingNativeInterface = NativeInterfaceFactory.getInstance().createTradingInterface(debugFlag);
+		} catch (InterfaceNotCreatedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		new Thread(new OrderTimeOutThread()).start();
 	}
 	
 	public void sendSettlement(){
-		TRADING_NATIVE_INTERFACE.sendSettlementReqest(BROKER_ID, INVESTOR_ID);
+		tradingNativeInterface.sendSettlementReqest(BROKER_ID, INVESTOR_ID);
 	}
 	
 	public String sendOrderSet(String insturment, String initSide, double initPrice, double initSize, long timeOut, double tgp, double tlp){
@@ -82,8 +91,8 @@ public class MatlabTradeIntegrator {
 		
 		try {
 			OrderRepository.getInstance().addOrderBucket(insturment, bucket);
-			TRADING_NATIVE_INTERFACE.sendTradeRequest(BROKER_ID, PASS, INVESTOR_ID, bucket.getInitialRequest());
-			MARKET_DATA_NATIVE_INTERFACE.sendQuoteRequest(new String[]{insturment});
+			tradingNativeInterface.sendTradeRequest(BROKER_ID, PASS, INVESTOR_ID, bucket.getInitialRequest());
+			marketDataNativeInterface.sendQuoteRequest(new String[]{insturment});
 		} catch (IncompleteBucketException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -98,7 +107,7 @@ public class MatlabTradeIntegrator {
 		TradeRequest initialRequest = bucket.getInitialRequest();
 		OrderActionRequest request = factory.createOrderActionRequest(initialRequest.getInstrumentID(), initialRequest.getOrderRef());
 		bucket.setOrderState(OrderBucket.orderStates.CANCELLED_BY_TRADER);
-		TRADING_NATIVE_INTERFACE.sendOrderAction(BROKER_ID, PASS, INVESTOR_ID, request);
+		tradingNativeInterface.sendOrderAction(BROKER_ID, PASS, INVESTOR_ID, request);
 	}
 	
 	public String sendSingleOrder(String direction, String  instrument, double price, long timeOut){
@@ -114,8 +123,8 @@ public class MatlabTradeIntegrator {
 		bucket.setTimeOut(timeOut);
 		try {
 			OrderRepository.getInstance().addOrderBucket(instrument, bucket);
-			TRADING_NATIVE_INTERFACE.sendTradeRequest(BROKER_ID, PASS, INVESTOR_ID, bucket.getInitialRequest());
-			MARKET_DATA_NATIVE_INTERFACE.sendQuoteRequest(new String[]{instrument});
+			tradingNativeInterface.sendTradeRequest(BROKER_ID, PASS, INVESTOR_ID, bucket.getInitialRequest());
+			marketDataNativeInterface.sendQuoteRequest(new String[]{instrument});
 		} catch (IncompleteBucketException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -172,8 +181,8 @@ public class MatlabTradeIntegrator {
 			} 
 			else if(bucket.getOrderState() == OrderBucket.orderStates.INITIAL_REQUEST){
 					bucket.setOrderState(OrderBucket.orderStates.EXIT_REQUEST);
-					MARKET_DATA_NATIVE_INTERFACE.sendQuoteRequest(new String[]{instrument});
-					TRADING_NATIVE_INTERFACE.sendTradeRequest(BROKER_ID, PASS, INVESTOR_ID, bucket.getExitRequest());
+					marketDataNativeInterface.sendQuoteRequest(new String[]{instrument});
+					tradingNativeInterface.sendTradeRequest(BROKER_ID, PASS, INVESTOR_ID, bucket.getExitRequest());
 			}
 			else if(bucket.getOrderState() == OrderBucket.orderStates.EXIT_REQUEST){
 				bucket.setOrderState(OrderBucket.orderStates.CYCLE_COMPLETED);
@@ -181,7 +190,7 @@ public class MatlabTradeIntegrator {
 			else if(bucket.getOrderState() == OrderBucket.orderStates.STOP_LOSS_COMPLETED){
 				OrderActionFactory factory = new OrderActionFactory();
 				OrderActionRequest request = factory.createOrderActionRequest(response.getInstrumentID(), bucket.getExitRequest().getOrderRef());
-				TRADING_NATIVE_INTERFACE.sendOrderAction(BROKER_ID, PASS, INVESTOR_ID, request);
+				tradingNativeInterface.sendOrderAction(BROKER_ID, PASS, INVESTOR_ID, request);
 			}
 			
 			
@@ -196,7 +205,7 @@ public class MatlabTradeIntegrator {
 		
 	}
 	
-	private static class ICMarketDataListener extends DefaultCTPListener{
+	private class ICMarketDataListener extends DefaultCTPListener{
 
 		@Override
 		public void onRtnDepthMarketData(MarketDataResponse response) {
@@ -204,10 +213,19 @@ public class MatlabTradeIntegrator {
 			List<OrderBucket> relatedOrders = OrderRepository.getInstance().searchBucketsOnState(insturment, OrderBucket.orderStates.EXIT_REQUEST);
 			for(int i = 0, n = relatedOrders.size(); i < n; i++){
 				OrderBucket bucket = relatedOrders.get(i);
-				if(bucket.getStopLossRequest() != null &&  bucket.getStopLossRequest().getCutOffPrice() >= response.getLastPrice()){
-					bucket.setOrderState(OrderBucket.orderStates.STOP_LOSS_COMPLETED);
-					bucket.getStopLossRequest().setLimitPrice(response.getLastPrice());
-					TRADING_NATIVE_INTERFACE.sendTradeRequest(BROKER_ID, PASS, INVESTOR_ID, bucket.getStopLossRequest());
+				String intialDirection = bucket.getInitialRequest().getDirection();
+				TradeRequest stopLossRequest = bucket.getStopLossRequest();
+				if(stopLossRequest != null ){
+					if("0".equals(intialDirection) && stopLossRequest.getCutOffPrice() >= response.getLastPrice()){
+						bucket.setOrderState(OrderBucket.orderStates.STOP_LOSS_COMPLETED);
+						stopLossRequest.setLimitPrice(response.getLastPrice());
+						tradingNativeInterface.sendTradeRequest(BROKER_ID, PASS, INVESTOR_ID, stopLossRequest);
+					}
+					if("1".equals(intialDirection) && stopLossRequest.getCutOffPrice() <= response.getLastPrice()){
+						bucket.setOrderState(OrderBucket.orderStates.STOP_LOSS_COMPLETED);
+						stopLossRequest.setLimitPrice(response.getLastPrice());
+						tradingNativeInterface.sendTradeRequest(BROKER_ID, PASS, INVESTOR_ID, stopLossRequest);
+					}
 					
 				}
 			}
@@ -216,10 +234,10 @@ public class MatlabTradeIntegrator {
 	}
 	
 	public void requestLogin(String brokerId, String password, String investorId){
-		TRADING_NATIVE_INTERFACE.subscribeListener(new ICMatLabTradeListener());
-		MARKET_DATA_NATIVE_INTERFACE.subscribeListener(new ICMarketDataListener());
-		TRADING_NATIVE_INTERFACE.sendLoginMessage(brokerId, password, investorId);
-		MARKET_DATA_NATIVE_INTERFACE.sendLoginMessage(brokerId, password, investorId);
+		tradingNativeInterface.subscribeListener(new ICMatLabTradeListener());
+		marketDataNativeInterface.subscribeListener(new ICMarketDataListener());
+		tradingNativeInterface.sendLoginMessage(brokerId, password, investorId);
+		marketDataNativeInterface.sendLoginMessage(brokerId, password, investorId);
 
 	}
 	
@@ -238,8 +256,8 @@ public class MatlabTradeIntegrator {
 			bucket.setInitialRequest(initialRequest);
 			OrderRepository.getInstance().addOrderBucket(instrumentId, bucket);
 			bucket.setTimeOut(timeOut);
-			TRADING_NATIVE_INTERFACE.sendTradeRequest(BROKER_ID, PASS, INVESTOR_ID, bucket.getInitialRequest());
-			MARKET_DATA_NATIVE_INTERFACE.sendQuoteRequest(new String[]{instrumentId});
+			tradingNativeInterface.sendTradeRequest(BROKER_ID, PASS, INVESTOR_ID, bucket.getInitialRequest());
+			marketDataNativeInterface.sendQuoteRequest(new String[]{instrumentId});
 
 		} catch (IncompleteBucketException e) {
 			// TODO Auto-generated catch block

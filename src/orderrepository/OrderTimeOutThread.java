@@ -2,6 +2,8 @@ package orderrepository;
 
 import java.util.List;
 
+import nativeinterfaces.InterfaceNotCreatedException;
+import nativeinterfaces.NativeInterfaceFactory;
 import nativeinterfaces.TradingNativeInterface;
 import bo.OrderActionRequest;
 import factories.OrderActionFactory;
@@ -22,7 +24,14 @@ public class OrderTimeOutThread implements Runnable{
 						OrderActionFactory factory = new OrderActionFactory();
 						OrderActionRequest request = factory.createOrderActionRequest(orderBucket.getInitialRequest().getInstrumentID(), orderBucket.getInitialRequest().getOrderRef());
 						orderBucket.setOrderState(OrderBucket.orderStates.ORDER_TIMEOUT);
-						new TradingNativeInterface().sendOrderAction("1013", "123321", "00000008", request);
+						try {
+							TradingNativeInterface tradeInterface = NativeInterfaceFactory.getInstance().getTradingInterface();
+							tradeInterface.sendOrderAction("1013", "123321", "00000008", request);
+						} catch (InterfaceNotCreatedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
 					}
 				}
 				Thread.sleep(1000);
