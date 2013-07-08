@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -19,6 +20,7 @@ import bo.MarketDataResponse;
 
 public class MockMDNativeInterface extends MarketDataNativeInterface{
 	private SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHH:mm:ss");
+	private SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm:ss");
 	private List<ICTPListener> listeners = new ArrayList<ICTPListener>(10);
 	 public final int ACTION_DAY = 0;
 	 
@@ -143,7 +145,9 @@ public class MockMDNativeInterface extends MarketDataNativeInterface{
 				 response.setTradingDay(txtData[TRADING_DAY]);
 				 response.setTurnOver(Double.parseDouble(txtData[TURN_OVER]));
 				 response.setUpdateMillisec(Integer.parseInt(txtData[UPDATE_MILLISEC]));
-
+				 Calendar cal = Calendar.getInstance();
+				 cal.setTimeInMillis(response.getCreationTimeStamp());
+				 response.setUpdateTime(timeFormatter.format(cal.getTime()));
 
 				 response.setUpperLimitPrice(Double.parseDouble(txtData[UPPER_LIMIT_PRICE]));
 				 response.setUpVolume(Double.parseDouble(txtData[UP_VOLUME]));

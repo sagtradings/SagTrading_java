@@ -14,6 +14,11 @@ public class Startup {
     static {
         try {
             System.loadLibrary("CTPDLL");
+            System.loadLibrary("CTPDLL");
+            System.loadLibrary("CTPDLL");
+            System.loadLibrary("CTPDLL");
+            System.loadLibrary("CTPDLL");
+            System.loadLibrary("CTPDLL");
             System.out.println("library loadedxfxxxxx");
         } catch (UnsatisfiedLinkError e) {
             e.printStackTrace();
@@ -48,8 +53,17 @@ public class Startup {
         System.out.println("exiting program");
        // new MarketDataNativeInterface().unSubscribeListener(null);
         currentTime = System.currentTimeMillis();
-        while(System.currentTimeMillis() - currentTime <= 20000);
+       // while(System.currentTimeMillis() - currentTime <= 20000);
         System.out.println("all done!");
+        new MarketDataNativeInterface().unSubscribeListener(null);
+        
+        nativeInterface.subscribeListener(ctpListener);
+        new MarketDataNativeInterface().sendLoginMessage("1013", "123321", "00000008");
+        new MarketDataNativeInterface().unSubscribeListener(null);
+        
+        nativeInterface.subscribeListener(ctpListener);
+        new MarketDataNativeInterface().sendLoginMessage("1013", "123321", "00000008");
+        new MarketDataNativeInterface().unSubscribeListener(null);
 
     }
 }

@@ -8,29 +8,34 @@ import listeners.DefaultCTPListener;
 import matlab.BarDataEvent;
 import matlab.MarketDataEvent;
 import matlab.MatlabEventListener;
+import matlab.MatlabOnLoginEvent;
 import nativeinterfaces.MarketDataNativeInterface;
 import bardatamanager.BarDataManager;
 import bardatamanager.EntryNotInitializedException;
 import bo.BarData;
+import bo.LoginResponse;
 import bo.MarketDataResponse;
 
 
 public class EventMatlabIntegrator {
 	
-	static{
-		System.loadLibrary("CTPDLL");
 		
-	}
+		
+	
 	
 	public EventMatlabIntegrator(){
 
-		
+		System.loadLibrary("CTPDLL");
 
 	}
 	
 	private class ICMDListener extends DefaultCTPListener{
 
 		private SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHH:mm:ss");
+		@Override
+		public void onRspUserLogin(LoginResponse loginResponse) {
+			notifyLoginEvent(new MatlabOnLoginEvent(loginResponse));
+		}
 		@Override
 		public void onRtnDepthMarketData(MarketDataResponse response) {
 
@@ -85,6 +90,7 @@ public class EventMatlabIntegrator {
 		new MarketDataNativeInterface().subscribeListener(new ICMDListener());
 		new MarketDataNativeInterface().sendLoginMessage(brokerId, password, investorId);
 		
+		
 	}
 
 	
@@ -98,6 +104,12 @@ public class EventMatlabIntegrator {
     public synchronized void removeMatlabEventListener(MatlabEventListener lis) {
        
     	data.removeElement(lis);
+    }
+    
+    public synchronized void notifyLoginEvent(MatlabOnLoginEvent loginEvent){
+		for(int i = 0, n = data.size(); i  < n; i++){
+			((MatlabEventListener)data.elementAt(i)).matlabOnLoginEvent(loginEvent);
+		}
     }
     
 
@@ -126,7 +138,7 @@ public class EventMatlabIntegrator {
     public void release(){
     	data.removeAllElements();
     	new MarketDataNativeInterface().unSubscribeListener(null);
-    	System.exit(0);
+    	
     	
     }
 

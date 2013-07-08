@@ -42,14 +42,14 @@ public class MockEventMatlabIntegrator {
 			try {
 				BarData compiledData = barManager.sendMarketData(response);
 				if(compiledData != null){
-					notifyMatLabBarData(compiledData);
+					notifyMatlabBarData(compiledData);
 				}
 			} catch (EntryNotInitializedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		
-			notifyMatLabLabTickEvent(response);
+			notifyMatlabLabTickEvent(response);
 		}
 		
 	}
@@ -69,7 +69,7 @@ public class MockEventMatlabIntegrator {
 		//new MarketDataNativeInterface().sendQuoteRequest(new String[]{instrument});
 		LoginResponse mockResponse = new LoginResponse();
 		log.info("Subscribed market data");
-		notifyMatLabLogInEvent(mockResponse);
+		notifyMatlabLogInEvent(mockResponse);
 	}
 	
 	public void subscribeBarData(String instrument, long barLength){
@@ -77,7 +77,7 @@ public class MockEventMatlabIntegrator {
 		subscribeMarketData(instrument);
 		SubscribeMarketDataResponse mockResponse = new SubscribeMarketDataResponse();
 		mockResponse.setSpecificInstrument(instrument);
-		notifyMatLabOnSubscribeEvent(mockResponse);
+		notifyMatlabOnSubscribeEvent(mockResponse);
 	}
 	
 	public void requestLogin(String brokerId, String password, String investorId){
@@ -95,16 +95,16 @@ public class MockEventMatlabIntegrator {
 	
 	private java.util.Vector data = new java.util.Vector();
 	
-    public synchronized void addMatLabEventListener(MatlabEventListener lis) {
+    public synchronized void addMatlabEventListener(MatlabEventListener lis) {
         data.addElement(lis);
     }
-    public synchronized void removeMatLabEventListener(MatlabEventListener lis) {
+    public synchronized void removeMatlabEventListener(MatlabEventListener lis) {
        
     	data.removeElement(lis);
     }
     
 
-    public void notifyMatLabLabTickEvent(MarketDataResponse response){
+    public void notifyMatlabLabTickEvent(MarketDataResponse response){
         java.util.Vector dataCopy;
         synchronized(this) {
             dataCopy = (java.util.Vector)data.clone();
@@ -115,21 +115,21 @@ public class MockEventMatlabIntegrator {
         }
     }
     
-    public void notifyMatLabLogInEvent(LoginResponse response){
+    public void notifyMatlabLogInEvent(LoginResponse response){
     	MatlabOnLoginEvent event = new MatlabOnLoginEvent(this, response);
     	for(int i = 0, n = data.size(); i < n; i++){
     		((MatlabEventListener)data.elementAt(i)).matlabOnLoginEvent(event);
     	}
     }
     
-    public void notifyMatLabOnSubscribeEvent(SubscribeMarketDataResponse response){
+    public void notifyMatlabOnSubscribeEvent(SubscribeMarketDataResponse response){
     	MatlabOnSubscribeDataEvent event = new MatlabOnSubscribeDataEvent(this, response);
     	for(int i = 0, n = data.size(); i < n; i++){
     		((MatlabEventListener)data.elementAt(i)).matlabOnSubscribeDataEvent(event);
     	}
     }
 
-    public void notifyMatLabBarData(BarData barData) {
+    public void notifyMatlabBarData(BarData barData) {
         java.util.Vector dataCopy;
         synchronized(this) {
             dataCopy = (java.util.Vector)data.clone();
