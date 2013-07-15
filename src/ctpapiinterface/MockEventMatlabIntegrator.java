@@ -20,8 +20,9 @@ import bo.SubscribeMarketDataResponse;
 
 public class MockEventMatlabIntegrator {
 	 private static Logger log = Logger.getLogger(MockEventMatlabIntegrator.class);
+	 BarDataManager barManager;
 	public MockEventMatlabIntegrator(){
-
+		barManager = new BarDataManager();
 
 	}
 	
@@ -38,7 +39,7 @@ public class MockEventMatlabIntegrator {
 			else{
 				response.setDownVolume(response.getVolume());
 			}
-			bardatamanager.BarDataManager barManager = bardatamanager.BarDataManager.getInstance();
+			
 			try {
 				BarData compiledData = barManager.sendMarketData(response);
 				if(compiledData != null){
@@ -73,7 +74,7 @@ public class MockEventMatlabIntegrator {
 	}
 	
 	public void subscribeBarData(String instrument, long barLength){
-		BarDataManager.getInstance().initializeEntry(instrument, barLength);
+		barManager.initializeEntry(instrument, barLength);
 		subscribeMarketData(instrument);
 		SubscribeMarketDataResponse mockResponse = new SubscribeMarketDataResponse();
 		mockResponse.setSpecificInstrument(instrument);

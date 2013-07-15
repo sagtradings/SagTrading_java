@@ -33,6 +33,7 @@ import factories.OrderActionFactory;
 import factories.TradeRequestFactory;
 
 public class MatlabTradeIntegrator {
+	private  OrderRepository orderRepository = OrderRepository.getInstance();
 	private MarketDataNativeInterface marketDataNativeInterface;
 	private static final String INVESTOR_ID = "00000008";
 	private static final String PASS = "123321";
@@ -90,7 +91,7 @@ public class MatlabTradeIntegrator {
 		bucket.setStopLossRequest(stopRequest);
 		
 		try {
-			OrderRepository.getInstance().addOrderBucket(insturment, bucket);
+			orderRepository.addOrderBucket(insturment, bucket);
 			tradingNativeInterface.sendTradeRequest(BROKER_ID, PASS, INVESTOR_ID, bucket.getInitialRequest());
 			marketDataNativeInterface.sendQuoteRequest(new String[]{insturment});
 		} catch (IncompleteBucketException e) {
@@ -103,7 +104,7 @@ public class MatlabTradeIntegrator {
 	
 	public void cancelOrder(String orderRef){
 		OrderActionFactory factory = new OrderActionFactory();
-		OrderBucket bucket = OrderRepository.getInstance().getBucketForOrigOrder(orderRef);
+		OrderBucket bucket = orderRepository.getBucketForOrigOrder(orderRef);
 		TradeRequest initialRequest = bucket.getInitialRequest();
 		OrderActionRequest request = factory.createOrderActionRequest(initialRequest.getInstrumentID(), initialRequest.getOrderRef());
 		bucket.setOrderState(OrderBucket.orderStates.CANCELLED_BY_TRADER);
@@ -122,7 +123,7 @@ public class MatlabTradeIntegrator {
 		bucket.setInitialRequest(request);
 		bucket.setTimeOut(timeOut);
 		try {
-			OrderRepository.getInstance().addOrderBucket(instrument, bucket);
+			orderRepository.addOrderBucket(instrument, bucket);
 			tradingNativeInterface.sendTradeRequest(BROKER_ID, PASS, INVESTOR_ID, bucket.getInitialRequest());
 			marketDataNativeInterface.sendQuoteRequest(new String[]{instrument});
 		} catch (IncompleteBucketException e) {
@@ -167,7 +168,7 @@ public class MatlabTradeIntegrator {
 		public void onRtnTradingData(TradeDataResponse response) {
 			
 			String instrument = response.getInstrumentID();
-			OrderRepository repository = OrderRepository.getInstance();
+			OrderRepository repository = orderRepository;
 			String originatingOrderRef = response.getOrderRef();
 			
 			OrderBucket bucket = repository.searchBucket(originatingOrderRef);
@@ -210,7 +211,7 @@ public class MatlabTradeIntegrator {
 		@Override
 		public void onRtnDepthMarketData(MarketDataResponse response) {
 			String insturment = response.getInstrumentId();
-			List<OrderBucket> relatedOrders = OrderRepository.getInstance().searchBucketsOnState(insturment, OrderBucket.orderStates.EXIT_REQUEST);
+			List<OrderBucket> relatedOrders = orderRepository.searchBucketsOnState(insturment, OrderBucket.orderStates.EXIT_REQUEST);
 			for(int i = 0, n = relatedOrders.size(); i < n; i++){
 				OrderBucket bucket = relatedOrders.get(i);
 				String intialDirection = bucket.getInitialRequest().getDirection();
@@ -254,7 +255,7 @@ public class MatlabTradeIntegrator {
 			bucket.setTimeOut(timeOut);
 			bucket.setOrderState(OrderBucket.orderStates.INITIAL_REQUEST);
 			bucket.setInitialRequest(initialRequest);
-			OrderRepository.getInstance().addOrderBucket(instrumentId, bucket);
+			orderRepository.addOrderBucket(instrumentId, bucket);
 			bucket.setTimeOut(timeOut);
 			tradingNativeInterface.sendTradeRequest(BROKER_ID, PASS, INVESTOR_ID, bucket.getInitialRequest());
 			marketDataNativeInterface.sendQuoteRequest(new String[]{instrumentId});

@@ -19,12 +19,12 @@ import bo.MarketDataResponse;
 
 public class EventMatlabIntegrator {
 	
-		
+	BarDataManager barManager;
 		
 	
 	
 	public EventMatlabIntegrator(){
-
+		barManager = new BarDataManager();
 		System.loadLibrary("CTPDLL");
 
 	}
@@ -82,7 +82,7 @@ public class EventMatlabIntegrator {
 	}
 	
 	public void subscribeBarData(String instrument, long barLength){
-		BarDataManager.getInstance().initializeEntry(instrument, barLength);
+		barManager.initializeEntry(instrument, barLength);
 		subscribeMarketData(instrument);
 	}
 	

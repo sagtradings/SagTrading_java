@@ -16,7 +16,7 @@ public class BarDataManager {
 		return instance;
 	}
 	
-	private BarDataManager(){
+	public BarDataManager(){
 		
 	}
 	
