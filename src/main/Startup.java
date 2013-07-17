@@ -14,11 +14,6 @@ public class Startup {
     static {
         try {
             System.loadLibrary("CTPDLL");
-            System.loadLibrary("CTPDLL");
-            System.loadLibrary("CTPDLL");
-            System.loadLibrary("CTPDLL");
-            System.loadLibrary("CTPDLL");
-            System.loadLibrary("CTPDLL");
             System.out.println("library loadedxfxxxxx");
         } catch (UnsatisfiedLinkError e) {
             e.printStackTrace();
