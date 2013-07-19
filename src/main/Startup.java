@@ -41,7 +41,7 @@ public class Startup {
         long currentTime = System.currentTimeMillis();
        // while (System.currentTimeMillis() - currentTime <= 5000) ;
         //new MarketDataNativeInterface().sendQuoteRequest(quote2);
-
+        
         currentTime = System.currentTimeMillis();
       //  while (System.currentTimeMillis() - currentTime <= 5000) ;
         //new DefaultNativeInterface().sendUnsubscribeQuoteRequest(quote1);
@@ -50,15 +50,16 @@ public class Startup {
         currentTime = System.currentTimeMillis();
        // while(System.currentTimeMillis() - currentTime <= 20000);
         System.out.println("all done!");
-        new MarketDataNativeInterface().unSubscribeListener(null);
+       // new MarketDataNativeInterface().unSubscribeListener(null);
         
         nativeInterface.subscribeListener(ctpListener);
         new MarketDataNativeInterface().sendLoginMessage("1013", "123321", "00000008");
-        new MarketDataNativeInterface().unSubscribeListener(null);
+      //  new MarketDataNativeInterface().unSubscribeListener(null);
         
         nativeInterface.subscribeListener(ctpListener);
         new MarketDataNativeInterface().sendLoginMessage("1013", "123321", "00000008");
-        new MarketDataNativeInterface().unSubscribeListener(null);
+       // new MarketDataNativeInterface().unSubscribeListener(null);
+        while(true);
 
     }
 }

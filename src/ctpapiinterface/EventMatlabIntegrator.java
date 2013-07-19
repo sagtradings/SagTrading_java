@@ -55,7 +55,7 @@ public class EventMatlabIntegrator {
 				e.printStackTrace();
 			}
 			//BarDataManager.
-			bardatamanager.BarDataManager barManager = bardatamanager.BarDataManager.getInstance();
+			
 			try {
 				
 				BarData compiledData = barManager.sendMarketData(response);

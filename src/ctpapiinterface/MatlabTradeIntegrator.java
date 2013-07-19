@@ -1,11 +1,14 @@
 package ctpapiinterface;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import listeners.DefaultCTPListener;
 import matlab.MatlabOnLoginEvent;
 import matlab.MatlabOnOrderActionEvent;
+import matlab.MatlabOnOrderCycleCompleteEvent;
 import matlab.MatlabOnRtnErrorEvent;
 import matlab.MatlabOnRtnOrderEvent;
 import matlab.MatlabOnRtnTradeEvent;
@@ -34,6 +37,7 @@ import factories.TradeRequestFactory;
 
 public class MatlabTradeIntegrator {
 	private  OrderRepository orderRepository = OrderRepository.getInstance();
+	private Map<String, Double> instrumentPositions = new HashMap<String, Double>(10);
 	private MarketDataNativeInterface marketDataNativeInterface;
 	private static final String INVESTOR_ID = "00000008";
 	private static final String PASS = "123321";
@@ -62,13 +66,30 @@ public class MatlabTradeIntegrator {
 		tradingNativeInterface.sendSettlementReqest(BROKER_ID, INVESTOR_ID);
 	}
 	
-	public String sendOrderSet(String insturment, String initSide, double initPrice, double initSize, long timeOut, double tgp, double tlp){
+	public double getPosition(String instrument){
+		Double answer = instrumentPositions.get(instrument);
+		if(answer == null){
+			return 0;
+		}
+		return answer;
+	}
+	
+	public OrderBucket.orderStates getOrderStatus(String orderRef){
+		OrderBucket bucket = orderRepository.getBucketForOrigOrder(orderRef);
+		if(bucket == null){
+			return null;
+		}
+		return bucket.getOrderState();
+	}
+	
+	public String sendOrderSet(String insturment, String initSide, double initPrice, int initSize, long timeOut, double tgp, double tlp){
 		String initOrderRef = OrderRefGenerator.getInstance().getNextRef();
 		String exitOrderRef = OrderRefGenerator.getInstance().getNextRef();
 		String stopLossOrderRef = OrderRefGenerator.getInstance().getNextRef();
 		
 		TradeRequestFactory factory = new TradeRequestFactory();
 		TradeRequest initialRequest = factory.createRequest(insturment, initPrice, initSide);
+		initialRequest.setVolumeTotalOriginal(initSize);
 		initialRequest.setOrderRef(initOrderRef);
 		initialRequest.setOriginatingOrderRef(initOrderRef);
 		initialRequest.setRequestID(MessageIDGenerator.getInstance().getNextID());
@@ -81,6 +102,7 @@ public class MatlabTradeIntegrator {
 		exitRequest.setOrderRef(exitOrderRef);
 		exitRequest.setRequestID(MessageIDGenerator.getInstance().getNextID());
 		exitRequest.setOriginatingOrderRef(initOrderRef);
+		exitRequest.setVolumeTotalOriginal(initSize);
 		bucket.setExitRequest(exitRequest);
 		
 		TradeRequest stopRequest = factory.createRequest(insturment, initPrice - tlp, "0".equals(initSide) ? "1" : "0");
@@ -88,6 +110,7 @@ public class MatlabTradeIntegrator {
 		stopRequest.setRequestID(MessageIDGenerator.getInstance().getNextID());
 		stopRequest.setOriginatingOrderRef(initOrderRef);
 		stopRequest.setCutOffPrice(initPrice - tlp);
+		stopRequest.setVolumeTotalOriginal(initSize);
 		bucket.setStopLossRequest(stopRequest);
 		
 		try {
@@ -179,6 +202,10 @@ public class MatlabTradeIntegrator {
 			}
 			if(bucket.getOrderState() == OrderBucket.orderStates.INITIAL_REQUEST && bucket.getExitRequest() == null){
 				bucket.setOrderState(OrderBucket.orderStates.CYCLE_COMPLETED);
+				MatlabOnOrderCycleCompleteEvent cycleEvent = new MatlabOnOrderCycleCompleteEvent(this);
+				cycleEvent.setOrderRef(response.getOrderRef());
+				cycleEvent.setCompletionType(0);
+				notifyMatlabOnOrderComplete(cycleEvent);
 			} 
 			else if(bucket.getOrderState() == OrderBucket.orderStates.INITIAL_REQUEST){
 					bucket.setOrderState(OrderBucket.orderStates.EXIT_REQUEST);
@@ -187,10 +214,18 @@ public class MatlabTradeIntegrator {
 			}
 			else if(bucket.getOrderState() == OrderBucket.orderStates.EXIT_REQUEST){
 				bucket.setOrderState(OrderBucket.orderStates.CYCLE_COMPLETED);
+				MatlabOnOrderCycleCompleteEvent cycleEvent = new MatlabOnOrderCycleCompleteEvent(this);
+				cycleEvent.setOrderRef(response.getOrderRef());
+				cycleEvent.setCompletionType(0);
+				notifyMatlabOnOrderComplete(cycleEvent);
 			}
 			else if(bucket.getOrderState() == OrderBucket.orderStates.STOP_LOSS_COMPLETED){
 				OrderActionFactory factory = new OrderActionFactory();
 				OrderActionRequest request = factory.createOrderActionRequest(response.getInstrumentID(), bucket.getExitRequest().getOrderRef());
+				MatlabOnOrderCycleCompleteEvent cycleEvent = new MatlabOnOrderCycleCompleteEvent(this);
+				cycleEvent.setOrderRef(response.getOrderRef());
+				cycleEvent.setCompletionType(1);
+				notifyMatlabOnOrderComplete(cycleEvent);
 				tradingNativeInterface.sendOrderAction(BROKER_ID, PASS, INVESTOR_ID, request);
 			}
 			
@@ -242,12 +277,13 @@ public class MatlabTradeIntegrator {
 
 	}
 	
-	public String sendOrder(String orderType, double price, String instrumentId, long timeOut){
+	public String sendOrder(String orderType, double price, String instrumentId, long timeOut, int initSize){
 		String initOrderRef = OrderRefGenerator.getInstance().getNextRef();
 		try {
 			
 			TradeRequestFactory factory = new TradeRequestFactory();
 			TradeRequest initialRequest = factory.createRequest(instrumentId, price, orderType);
+			initialRequest.setVolumeTotalOriginal(initSize);
 			initialRequest.setOrderRef(initOrderRef);
 			initialRequest.setOriginatingOrderRef(initOrderRef);
 			initialRequest.setRequestID(MessageIDGenerator.getInstance().getNextID());
@@ -266,6 +302,7 @@ public class MatlabTradeIntegrator {
 		}
 		return initOrderRef;
 	}
+	
 	
 	public void addMatlabTradeListener(MatlabTradeListener tradeListener){
 		matLabListeners.add(tradeListener);
@@ -302,7 +339,14 @@ public class MatlabTradeIntegrator {
 	public void notifyMatlabOnOrderActionEvent(MatlabOnOrderActionEvent actionEvent){
 		for(int i = 0, n = matLabListeners.size(); i < n; i++){
 			matLabListeners.get(i).matlabOnOrderActionEvent(actionEvent);
+		}
+		
 	}
+	
+	public void notifyMatlabOnOrderComplete(MatlabOnOrderCycleCompleteEvent actionEvent){
+		for(int i = 0, n = matLabListeners.size(); i < n; i++){
+			matLabListeners.get(i).matlabOnCycleCompleted(actionEvent);
+		}
 	}
 	
 }
