@@ -25,6 +25,7 @@ import orderrepository.IncompleteBucketException;
 import orderrepository.OrderBucket;
 import orderrepository.OrderRepository;
 import orderrepository.OrderTimeOutThread;
+import OrderPositionRegistry.InstrumentPositionRegistry;
 import bo.ErrorResult;
 import bo.LoginResponse;
 import bo.MarketDataResponse;
@@ -37,7 +38,7 @@ import factories.TradeRequestFactory;
 
 public class MatlabTradeIntegrator {
 	private  OrderRepository orderRepository = OrderRepository.getInstance();
-	private Map<String, Double> instrumentPositions = new HashMap<String, Double>(10);
+	
 	private MarketDataNativeInterface marketDataNativeInterface;
 	private static final String INVESTOR_ID = "00000008";
 	private static final String PASS = "123321";
@@ -67,7 +68,7 @@ public class MatlabTradeIntegrator {
 	}
 	
 	public double getPosition(String instrument){
-		Double answer = instrumentPositions.get(instrument);
+		Double answer = InstrumentPositionRegistry.getInstance().getPosition(instrument);
 		if(answer == null){
 			return 0;
 		}
@@ -190,6 +191,10 @@ public class MatlabTradeIntegrator {
 		@Override
 		public void onRtnTradingData(TradeDataResponse response) {
 			
+			double currentPosition = InstrumentPositionRegistry.getInstance().getPosition(response.getInstrumentID());
+			double positionChange = "0".equals(response.getDirection()) ? -response.getVolume():response.getVolume();
+			InstrumentPositionRegistry.getInstance().putPosition(response.getInstrumentID(), currentPosition + positionChange);
+			
 			String instrument = response.getInstrumentID();
 			OrderRepository repository = orderRepository;
 			String originatingOrderRef = response.getOrderRef();
@@ -278,6 +283,7 @@ public class MatlabTradeIntegrator {
 	}
 	
 	public String sendOrder(String orderType, double price, String instrumentId, long timeOut, int initSize){
+		long milliseconds = System.currentTimeMillis();
 		String initOrderRef = OrderRefGenerator.getInstance().getNextRef();
 		try {
 			
@@ -293,6 +299,7 @@ public class MatlabTradeIntegrator {
 			bucket.setInitialRequest(initialRequest);
 			orderRepository.addOrderBucket(instrumentId, bucket);
 			bucket.setTimeOut(timeOut);
+			
 			tradingNativeInterface.sendTradeRequest(BROKER_ID, PASS, INVESTOR_ID, bucket.getInitialRequest());
 			marketDataNativeInterface.sendQuoteRequest(new String[]{instrumentId});
 
