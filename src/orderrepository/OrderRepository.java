@@ -54,6 +54,20 @@ public class OrderRepository {
 	public synchronized List<OrderBucket> getOrderBuckets(String instrument){
 		return activeOrders.get(instrument);
 	}
+	 
+	public synchronized<Tx extends OrderBucket> List<Tx> getOrderBucketsForOrderType(String instrument, Class<Tx> clas){
+		List<Tx> answer = new ArrayList<Tx>(10);
+		List<OrderBucket> initialOrders = getOrderBuckets(instrument);
+		Iterator<OrderBucket> itt = initialOrders.iterator();
+		while(itt.hasNext()){
+			OrderBucket bucket = itt.next();
+			if(bucket.getClass() == clas){
+				answer.add((Tx) bucket);
+			}
+		}
+		return answer;
+		
+	}
 	
 	public synchronized OrderBucket getBucketForOrigOrder(String orderRef){
 		Iterator<String> itt = activeOrders.keySet().iterator();
@@ -136,4 +150,6 @@ public class OrderRepository {
 		}
 		return answer;
 	}
+	
+
 }

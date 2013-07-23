@@ -25,6 +25,10 @@ import orderrepository.IncompleteBucketException;
 import orderrepository.OrderBucket;
 import orderrepository.OrderRepository;
 import orderrepository.OrderTimeOutThread;
+import tradeloggers.CsvLogger;
+import tradeloggers.OrderActionRequestLogger;
+import tradeloggers.OrderFilledLogger;
+import tradeloggers.OrderRequestLogger;
 import OrderPositionRegistry.InstrumentPositionRegistry;
 import bo.ErrorResult;
 import bo.LoginResponse;
@@ -44,6 +48,12 @@ public class MatlabTradeIntegrator {
 	private static final String PASS = "123321";
 	private TradingNativeInterface tradingNativeInterface;
 	private static final String BROKER_ID = "1013";
+	private CsvLogger actionRequestLogger = new OrderActionRequestLogger();
+	private CsvLogger actionResponseLogger = new OrderActionRequestLogger();
+	private CsvLogger tradeRequestLogger = new OrderRequestLogger();
+	private CsvLogger tradeAcceptedLogger = new OrderRequestLogger();
+	private CsvLogger tradeFilledLogger = new OrderFilledLogger();
+	
 	static{
 		System.loadLibrary("CTPDLL");
 		System.loadLibrary("CTPTRADEDLL");
@@ -117,6 +127,7 @@ public class MatlabTradeIntegrator {
 		try {
 			orderRepository.addOrderBucket(insturment, bucket);
 			tradingNativeInterface.sendTradeRequest(BROKER_ID, PASS, INVESTOR_ID, bucket.getInitialRequest());
+			tradeRequestLogger.logObject(bucket.getInitialRequest(), "orderRequests");
 			marketDataNativeInterface.sendQuoteRequest(new String[]{insturment});
 		} catch (IncompleteBucketException e) {
 			// TODO Auto-generated catch block
@@ -133,6 +144,7 @@ public class MatlabTradeIntegrator {
 		OrderActionRequest request = factory.createOrderActionRequest(initialRequest.getInstrumentID(), initialRequest.getOrderRef());
 		bucket.setOrderState(OrderBucket.orderStates.CANCELLED_BY_TRADER);
 		tradingNativeInterface.sendOrderAction(BROKER_ID, PASS, INVESTOR_ID, request);
+		actionRequestLogger.logObject(request, "actionRequests");
 	}
 	
 	public String sendSingleOrder(String direction, String  instrument, double price, long timeOut){
@@ -149,6 +161,7 @@ public class MatlabTradeIntegrator {
 		try {
 			orderRepository.addOrderBucket(instrument, bucket);
 			tradingNativeInterface.sendTradeRequest(BROKER_ID, PASS, INVESTOR_ID, bucket.getInitialRequest());
+			tradeRequestLogger.logObject(bucket.getInitialRequest(), "orderRequests");
 			marketDataNativeInterface.sendQuoteRequest(new String[]{instrument});
 		} catch (IncompleteBucketException e) {
 			// TODO Auto-generated catch block
@@ -174,6 +187,7 @@ public class MatlabTradeIntegrator {
 			// TODO Auto-generated method stub
 			MatlabOnOrderActionEvent actionEvent = new MatlabOnOrderActionEvent(this, initiatingAction);
 			notifyMatlabOnOrderActionEvent(actionEvent);
+			actionResponseLogger.logObject(initiatingAction, "actionResponses");
 		}
 
 		@Override
@@ -186,11 +200,12 @@ public class MatlabTradeIntegrator {
 		public void onRtnOrder(OrderInsertResponse response) {
 			MatlabOnRtnOrderEvent orderEvent = new MatlabOnRtnOrderEvent(this, response);
 			notifyMatlabOnRtnOrderEvent(orderEvent);
+			tradeAcceptedLogger.logObject(response, "ordersAccepted");
 		}
 
 		@Override
 		public void onRtnTradingData(TradeDataResponse response) {
-			
+			tradeFilledLogger.logObject(response, "tradesFilled");
 			double currentPosition = InstrumentPositionRegistry.getInstance().getPosition(response.getInstrumentID());
 			double positionChange = "0".equals(response.getDirection()) ? -response.getVolume():response.getVolume();
 			InstrumentPositionRegistry.getInstance().putPosition(response.getInstrumentID(), currentPosition + positionChange);
@@ -216,6 +231,7 @@ public class MatlabTradeIntegrator {
 					bucket.setOrderState(OrderBucket.orderStates.EXIT_REQUEST);
 					marketDataNativeInterface.sendQuoteRequest(new String[]{instrument});
 					tradingNativeInterface.sendTradeRequest(BROKER_ID, PASS, INVESTOR_ID, bucket.getExitRequest());
+					tradeRequestLogger.logObject(bucket.getExitRequest(), "orderRequests");
 			}
 			else if(bucket.getOrderState() == OrderBucket.orderStates.EXIT_REQUEST){
 				bucket.setOrderState(OrderBucket.orderStates.CYCLE_COMPLETED);
@@ -232,6 +248,7 @@ public class MatlabTradeIntegrator {
 				cycleEvent.setCompletionType(1);
 				notifyMatlabOnOrderComplete(cycleEvent);
 				tradingNativeInterface.sendOrderAction(BROKER_ID, PASS, INVESTOR_ID, request);
+				actionRequestLogger.logObject(request, "actionRequests");
 			}
 			
 			
@@ -261,11 +278,13 @@ public class MatlabTradeIntegrator {
 						bucket.setOrderState(OrderBucket.orderStates.STOP_LOSS_COMPLETED);
 						stopLossRequest.setLimitPrice(response.getLastPrice());
 						tradingNativeInterface.sendTradeRequest(BROKER_ID, PASS, INVESTOR_ID, stopLossRequest);
+						tradeRequestLogger.logObject(stopLossRequest, "orderRequests");
 					}
 					if("1".equals(intialDirection) && stopLossRequest.getCutOffPrice() <= response.getLastPrice()){
 						bucket.setOrderState(OrderBucket.orderStates.STOP_LOSS_COMPLETED);
 						stopLossRequest.setLimitPrice(response.getLastPrice());
 						tradingNativeInterface.sendTradeRequest(BROKER_ID, PASS, INVESTOR_ID, stopLossRequest);
+						tradeRequestLogger.logObject(stopLossRequest, "orderRequests");
 					}
 					
 				}
@@ -301,6 +320,7 @@ public class MatlabTradeIntegrator {
 			bucket.setTimeOut(timeOut);
 			
 			tradingNativeInterface.sendTradeRequest(BROKER_ID, PASS, INVESTOR_ID, bucket.getInitialRequest());
+			tradeRequestLogger.logObject(bucket.getInitialRequest(), "orderRequests");
 			marketDataNativeInterface.sendQuoteRequest(new String[]{instrumentId});
 
 		} catch (IncompleteBucketException e) {
