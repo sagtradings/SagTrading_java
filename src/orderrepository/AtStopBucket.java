@@ -1,6 +1,6 @@
 package orderrepository;
 
-public class AtStopBucket extends OrderBucket {
+public class AtStopBucket extends OrderBucket implements ISignablePrice{
 	private double signalPrice;
 
 	public double getSignalPrice() {

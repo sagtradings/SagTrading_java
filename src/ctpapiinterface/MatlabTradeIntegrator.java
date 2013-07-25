@@ -21,10 +21,13 @@ import nativeinterfaces.NativeInterfaceFactory;
 import nativeinterfaces.TradingNativeInterface;
 import orderrefgenerator.MessageIDGenerator;
 import orderrefgenerator.OrderRefGenerator;
+import orderrepository.ISignablePrice;
 import orderrepository.IncompleteBucketException;
 import orderrepository.OrderBucket;
 import orderrepository.OrderRepository;
 import orderrepository.OrderTimeOutThread;
+import tradeevaluators.IEvaluateTrade;
+import tradeevaluators.TradeEvaluatorRegistry;
 import tradeloggers.CsvLogger;
 import tradeloggers.OrderActionRequestLogger;
 import tradeloggers.OrderFilledLogger;
@@ -38,6 +41,7 @@ import bo.OrderInsertResponse;
 import bo.TradeDataResponse;
 import bo.TradeRequest;
 import factories.OrderActionFactory;
+import factories.OrderBucketFactory;
 import factories.TradeRequestFactory;
 
 public class MatlabTradeIntegrator {
@@ -93,7 +97,7 @@ public class MatlabTradeIntegrator {
 		return bucket.getOrderState();
 	}
 	
-	public String sendOrderSet(String insturment, String initSide, double initPrice, int initSize, long timeOut, double tgp, double tlp){
+	public String sendOrderSet(String insturment, int signalType, int signalPrice, String initSide, double initPrice, int initSize, long timeOut, double tgp, double tlp){
 		String initOrderRef = OrderRefGenerator.getInstance().getNextRef();
 		String exitOrderRef = OrderRefGenerator.getInstance().getNextRef();
 		String stopLossOrderRef = OrderRefGenerator.getInstance().getNextRef();
@@ -104,9 +108,9 @@ public class MatlabTradeIntegrator {
 		initialRequest.setOrderRef(initOrderRef);
 		initialRequest.setOriginatingOrderRef(initOrderRef);
 		initialRequest.setRequestID(MessageIDGenerator.getInstance().getNextID());
-		OrderBucket bucket = new OrderBucket();
+		OrderBucket bucket = new OrderBucketFactory().createBucket(signalType, signalPrice);
 		bucket.setTimeOut(timeOut);
-		bucket.setOrderState(OrderBucket.orderStates.INITIAL_REQUEST);
+		bucket.setOrderState(OrderBucket.orderStates.WAITING);
 		bucket.setInitialRequest(initialRequest);
 		
 		TradeRequest exitRequest = factory.createRequest(insturment, initPrice + tgp, "0".equals(initSide) ? "1" : "0" );
@@ -126,8 +130,11 @@ public class MatlabTradeIntegrator {
 		
 		try {
 			orderRepository.addOrderBucket(insturment, bucket);
-			tradingNativeInterface.sendTradeRequest(BROKER_ID, PASS, INVESTOR_ID, bucket.getInitialRequest());
-			tradeRequestLogger.logObject(bucket.getInitialRequest(), "orderRequests");
+			if(bucket.getClass() == OrderBucket.class){
+				bucket.setOrderState(OrderBucket.orderStates.INITIAL_REQUEST);
+				tradingNativeInterface.sendTradeRequest(BROKER_ID, PASS, INVESTOR_ID, bucket.getInitialRequest());
+				tradeRequestLogger.logObject(bucket.getInitialRequest(), "orderRequests");
+			}
 			marketDataNativeInterface.sendQuoteRequest(new String[]{insturment});
 		} catch (IncompleteBucketException e) {
 			// TODO Auto-generated catch block
@@ -268,6 +275,16 @@ public class MatlabTradeIntegrator {
 		@Override
 		public void onRtnDepthMarketData(MarketDataResponse response) {
 			String insturment = response.getInstrumentId();
+			List<OrderBucket> pendingBuckets = orderRepository.searchBucketsOnState(insturment, OrderBucket.orderStates.WAITING);
+			for(int i = 0, n = pendingBuckets.size(); i < n; i++){
+				OrderBucket pendingBucket = pendingBuckets.get(i);
+				IEvaluateTrade evaluator = TradeEvaluatorRegistry.getEvaluator(pendingBucket.getClass());
+				if(evaluator.evaluate((((ISignablePrice) pendingBucket).getSignalPrice()), response.getLastPrice(), pendingBucket.getInitialRequest().getDirection())){
+					pendingBucket.setOrderState(OrderBucket.orderStates.INITIAL_REQUEST);
+					tradingNativeInterface.sendTradeRequest(BROKER_ID, PASS, INVESTOR_ID, pendingBucket.getInitialRequest());
+					tradeRequestLogger.logObject(pendingBucket.getInitialRequest(), "orderRequests");
+				}
+			}
 			List<OrderBucket> relatedOrders = orderRepository.searchBucketsOnState(insturment, OrderBucket.orderStates.EXIT_REQUEST);
 			for(int i = 0, n = relatedOrders.size(); i < n; i++){
 				OrderBucket bucket = relatedOrders.get(i);
@@ -301,7 +318,7 @@ public class MatlabTradeIntegrator {
 
 	}
 	
-	public String sendOrder(String orderType, double price, String instrumentId, long timeOut, int initSize){
+	public String sendOrder(String orderType, int signalType, int signalPrice, double price, String instrumentId, long timeOut, int initSize){
 		long milliseconds = System.currentTimeMillis();
 		String initOrderRef = OrderRefGenerator.getInstance().getNextRef();
 		try {
@@ -312,15 +329,18 @@ public class MatlabTradeIntegrator {
 			initialRequest.setOrderRef(initOrderRef);
 			initialRequest.setOriginatingOrderRef(initOrderRef);
 			initialRequest.setRequestID(MessageIDGenerator.getInstance().getNextID());
-			OrderBucket bucket = new OrderBucket();
+			OrderBucket bucket = new OrderBucketFactory().createBucket(signalType, signalPrice);
 			bucket.setTimeOut(timeOut);
-			bucket.setOrderState(OrderBucket.orderStates.INITIAL_REQUEST);
+			bucket.setOrderState(OrderBucket.orderStates.WAITING);
 			bucket.setInitialRequest(initialRequest);
 			orderRepository.addOrderBucket(instrumentId, bucket);
 			bucket.setTimeOut(timeOut);
+			if(bucket.getClass() == OrderBucket.class){
+				bucket.setOrderState(OrderBucket.orderStates.INITIAL_REQUEST);
+				tradingNativeInterface.sendTradeRequest(BROKER_ID, PASS, INVESTOR_ID, bucket.getInitialRequest());
+				tradeRequestLogger.logObject(bucket.getInitialRequest(), "orderRequests");
+			}
 			
-			tradingNativeInterface.sendTradeRequest(BROKER_ID, PASS, INVESTOR_ID, bucket.getInitialRequest());
-			tradeRequestLogger.logObject(bucket.getInitialRequest(), "orderRequests");
 			marketDataNativeInterface.sendQuoteRequest(new String[]{instrumentId});
 
 		} catch (IncompleteBucketException e) {

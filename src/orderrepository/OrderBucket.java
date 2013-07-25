@@ -5,6 +5,7 @@ import bo.TradeRequest;
 public class OrderBucket {
 	
 	public static enum orderStates{
+		WAITING,
 		INITIAL_REQUEST, 
 		EXIT_REQUEST, 
 		CYCLE_COMPLETED,

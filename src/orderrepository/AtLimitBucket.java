@@ -1,6 +1,6 @@
 package orderrepository;
 
-public class AtLimitBucket extends OrderBucket {
+public class AtLimitBucket extends OrderBucket implements ISignablePrice{
 	private double signalPrice;
 
 	public double getSignalPrice() {
