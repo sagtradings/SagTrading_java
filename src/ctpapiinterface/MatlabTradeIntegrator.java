@@ -281,6 +281,7 @@ public class MatlabTradeIntegrator {
 				IEvaluateTrade evaluator = TradeEvaluatorRegistry.getEvaluator(pendingBucket.getClass());
 				if(evaluator.evaluate((((ISignablePrice) pendingBucket).getSignalPrice()), response.getLastPrice(), pendingBucket.getInitialRequest().getDirection())){
 					pendingBucket.setOrderState(OrderBucket.orderStates.INITIAL_REQUEST);
+					pendingBucket.getInitialRequest().setLimitPrice(response.getLastPrice());
 					tradingNativeInterface.sendTradeRequest(BROKER_ID, PASS, INVESTOR_ID, pendingBucket.getInitialRequest());
 					tradeRequestLogger.logObject(pendingBucket.getInitialRequest(), "orderRequests");
 				}
