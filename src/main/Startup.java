@@ -27,7 +27,7 @@ public class Startup {
         log.debug("A test messacgsex");
         DefaultCTPListener ctpListener = new NonEsperMarketDataListener();
         MarketDataNativeInterface nativeInterface = new MarketDataNativeInterface();
-      System.out.println("Gussiaas");
+      System.out.println("My Last Name is Gussiaas");
          nativeInterface.subscribeListener(ctpListener);
         String[] quote1 = {"IF1307"};
         String[] quote2 = {"IF1309"};
