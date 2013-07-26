@@ -17,7 +17,7 @@ public class OrderBucketFactory {
 			answer.setSignalPrice(signalPrice);
 			return answer;
 		}
-		if(signalPrice == 0 && orderType == 0){
+		if(orderType == 1){
 			AtMarketOrderBucket answer = new AtMarketOrderBucket();
 			return answer;
 		}
