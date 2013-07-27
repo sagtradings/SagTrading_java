@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import bo.MarketDataResponse;
+import dao.MarketDataDAO;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
@@ -37,6 +39,29 @@ public class HibernateTest {
 
         log.info("Listing all BarData");
         List list = barDataDAO.getAllBarData();
+
+        Iterator iter = list.iterator();
+        while (iter.hasNext()) {
+            log.info(iter.next());
+        }
+    }
+    @Test
+    public void marketDataResponse() {
+        log.info("Starting the Member Test Client");
+
+        MarketDataResponse marketData = new MarketDataResponse();
+        MarketDataDAO marketDataDAO = new MarketDataDAO();
+
+
+        log.info("Adding BarData to DAO");
+        marketData.setActionDay("Gusiaass");
+
+
+        marketDataDAO.addMarketData(marketData);
+
+
+        log.info("Listing all BarData");
+        List list = marketDataDAO.getAllMarketData();
 
         Iterator iter = list.iterator();
         while (iter.hasNext()) {

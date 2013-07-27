@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping schema="SAGTRADING">
+
+    <class name="bo.MarketDataResponse" table="MARKETDATARESPONSE">
+        <id name="marketdata_id" column="MARKETDATA_ID">
+            <generator class="identity"/>
+        </id>
+        <property name="actionDay" column="ACTIONDAY"/>
+        <property name="askPrice1" column="ASKPRICE1"/>
+        <property name="askPrice2" column="ASKPRICE2"/>
+        <property name="askPrice3" column="ASKPRICE3"/>
+        <property name="askPrice4" column="ASKPRICE4"/>
+        <property name="askPrice5" column="ASKPRICE5"/>
+        <property name="askVolume1" column="ASKVOLUME1"/>
+        <property name="askVolume2" column="ASKVOLUME2"/>
+        <property name="askVolume3" column="ASKVOLUME3"/>
+        <property name="askVolume4" column="ASKVOLUME4"/>
+        <property name="askVolume5" column="ASKVOLUME5"/>
+        <property name="averagePrice" column="AVERAGEPRICE"/>
+        <property name="bidPrice1" column="BIDPRICE1"/>
+        <property name="bidPrice2" column="BIDPRICE2"/>
+        <property name="bidPrice3" column="BIDPRICE3"/>
+        <property name="bidPrice4" column="BIDPRICE4"/>
+        <property name="bidPrice5" column="BIDPRICE5"/>
+        <property name="bidVolume1" column="BIDVOLUME1"/>
+        <property name="bidVolume2" column="BIDVOLUME2"/>
+        <property name="bidVolume3" column="BIDVOLUME3"/>
+        <property name="bidVolume4" column="BIDVOLUME4"/>
+        <property name="bidVolume5" column="BIDVOLUME5"/>
+        <property name="closePrice" column="CLOSEPRICE"/>
+        <property name="currDelta" column="CURRDELTA"/>
+        <property name="exchangeID" column="EXCHANGEID"/>
+        <property name="exchangeInstId" column="EXCHANGEINSTID"/>
+        <property name="highestPrice" column="HIGHESTPRICE"/>
+        <property name="instrumentId" column="INSTRUMENTID"/>
+        <property name="lastPrice" column="LASTPRICE"/>
+        <property name="lowerLimitPrice" column="LOWERLIMITPRICE"/>
+        <property name="lowestPrice" column="LOWESTPRICE"/>
+        <property name="openInterest" column="OPENINTEREST"/>
+        <property name="openPrice" column="OPENPRICE"/>
+        <property name="preClosePrice" column="PRECLOSEPRICE"/>
+        <property name="preDelta" column="PREDELTA"/>
+        <property name="preOpenInterest" column="PREOPENINTEREST"/>
+        <property name="preSettlementPrice" column="PRESETTLEMENTPRICE"/>
+        <property name="settlementPrice" column="SETTLEMENTPRICE"/>
+        <property name="tradingDay" column="TRADINGDAY"/>
+        <property name="turnOver" column="TURNOVER"/>
+        <property name="updateMillisec" column="UPDATEMILLISEC"/>
+        <property name="updateTime" column="UPDATETIME"/>
+        <property name="upperLimitPrice" column="UPPERLIMITPRICE"/>
+        <property name="creationTimeStamp" column="CREATIONTIMESTAMP"/>
+        <property name="millisecConversionTime" column="MILLISECCONVERSIONTIME"/>
+        <property name="volume" column="VOLUME"/>
+        <property name="upVolume" column="UPVOLUME"/>
+        <property name="downVolume" column="DOWNVOLUME"/>
+    </class>
+</hibernate-mapping>
+

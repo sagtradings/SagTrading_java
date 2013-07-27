@@ -21,6 +21,7 @@
 
         <!-- Mapping files -->
         <mapping resource="BarData.hbm.xml"/>
+        <mapping resource="MarketDataResponse.hbm.xml"/>
 
     </session-factory>
 </hibernate-configuration>
