@@ -97,13 +97,13 @@ public class MatlabTradeIntegrator {
 		return bucket.getOrderState();
 	}
 	
-	public String sendOrderSet(String insturment, int signalType, int signalPrice, String initSide, double initPrice, int initSize, long timeOut, double tgp, double tlp){
+	public String sendOrderSet(String insturment, String initSide, int signalType, int signalPrice, int initSize, long timeOut, double tgp, double tlp){
 		String initOrderRef = OrderRefGenerator.getInstance().getNextRef();
 		String exitOrderRef = OrderRefGenerator.getInstance().getNextRef();
 		String stopLossOrderRef = OrderRefGenerator.getInstance().getNextRef();
 		
 		TradeRequestFactory factory = new TradeRequestFactory();
-		TradeRequest initialRequest = factory.createRequest(insturment, initPrice, initSide);
+		TradeRequest initialRequest = factory.createRequest(insturment, signalPrice, initSide);
 		initialRequest.setVolumeTotalOriginal(initSize);
 		initialRequest.setOrderRef(initOrderRef);
 		initialRequest.setOriginatingOrderRef(initOrderRef);
@@ -113,18 +113,18 @@ public class MatlabTradeIntegrator {
 		bucket.setOrderState(OrderBucket.orderStates.WAITING);
 		bucket.setInitialRequest(initialRequest);
 		
-		TradeRequest exitRequest = factory.createRequest(insturment, initPrice + tgp, "0".equals(initSide) ? "1" : "0" );
+		TradeRequest exitRequest = factory.createRequest(insturment, signalPrice + tgp, "0".equals(initSide) ? "1" : "0" );
 		exitRequest.setOrderRef(exitOrderRef);
 		exitRequest.setRequestID(MessageIDGenerator.getInstance().getNextID());
 		exitRequest.setOriginatingOrderRef(initOrderRef);
 		exitRequest.setVolumeTotalOriginal(initSize);
 		bucket.setExitRequest(exitRequest);
 		
-		TradeRequest stopRequest = factory.createRequest(insturment, initPrice - tlp, "0".equals(initSide) ? "1" : "0");
+		TradeRequest stopRequest = factory.createRequest(insturment, signalPrice - tlp, "0".equals(initSide) ? "1" : "0");
 		stopRequest.setOrderRef(stopLossOrderRef);
 		stopRequest.setRequestID(MessageIDGenerator.getInstance().getNextID());
 		stopRequest.setOriginatingOrderRef(initOrderRef);
-		stopRequest.setCutOffPrice(initPrice - tlp);
+		stopRequest.setCutOffPrice(signalPrice - tlp);
 		stopRequest.setVolumeTotalOriginal(initSize);
 		bucket.setStopLossRequest(stopRequest);
 		
@@ -319,13 +319,13 @@ public class MatlabTradeIntegrator {
 
 	}
 	
-	public String sendOrder(String orderType, int signalType, int signalPrice, double price, String instrumentId, long timeOut, int initSize){
+	public String sendOrder(String instrumentId, String orderType, int signalType, int signalPrice,  int initSize,  long timeOut){
 		long milliseconds = System.currentTimeMillis();
 		String initOrderRef = OrderRefGenerator.getInstance().getNextRef();
 		try {
 			
 			TradeRequestFactory factory = new TradeRequestFactory();
-			TradeRequest initialRequest = factory.createRequest(instrumentId, price, orderType);
+			TradeRequest initialRequest = factory.createRequest(instrumentId, signalPrice, orderType);
 			initialRequest.setVolumeTotalOriginal(initSize);
 			initialRequest.setOrderRef(initOrderRef);
 			initialRequest.setOriginatingOrderRef(initOrderRef);
