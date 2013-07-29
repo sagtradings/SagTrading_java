@@ -4,6 +4,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import properties.PropertiesManager;
+
 import listeners.DefaultCTPListener;
 import matlab.BarDataEvent;
 import matlab.MarketDataEvent;
@@ -20,7 +22,7 @@ import bo.MarketDataResponse;
 public class EventMatlabIntegrator {
 	
 	BarDataManager barManager;
-		
+	private static final  String connectionURL =PropertiesManager.getInstance().getProperty("marketdataurl");
 	
 	
 	public EventMatlabIntegrator(){
@@ -88,7 +90,7 @@ public class EventMatlabIntegrator {
 	
 	public void requestLogin(String brokerId, String password, String investorId){
 		new MarketDataNativeInterface().subscribeListener(new ICMDListener());
-		new MarketDataNativeInterface().sendLoginMessage(brokerId, password, investorId);
+		new MarketDataNativeInterface().sendLoginMessage(brokerId, password, investorId, connectionURL);
 		
 		
 	}

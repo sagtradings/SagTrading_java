@@ -26,6 +26,7 @@ import orderrepository.IncompleteBucketException;
 import orderrepository.OrderBucket;
 import orderrepository.OrderRepository;
 import orderrepository.OrderTimeOutThread;
+import properties.PropertiesManager;
 import tradeevaluators.IEvaluateTrade;
 import tradeevaluators.TradeEvaluatorRegistry;
 import tradeloggers.CsvLogger;
@@ -46,7 +47,10 @@ import factories.TradeRequestFactory;
 
 public class MatlabTradeIntegrator {
 	private  OrderRepository orderRepository = OrderRepository.getInstance();
+
 	
+	private static final String tradeConnectionURL = PropertiesManager.getInstance().getProperty("tradedataurl");
+	private static final String marketDataURL = PropertiesManager.getInstance().getProperty("marketdataurl");
 	private MarketDataNativeInterface marketDataNativeInterface;
 	private static final String INVESTOR_ID = "00000008";
 	private static final String PASS = "123321";
@@ -314,8 +318,8 @@ public class MatlabTradeIntegrator {
 	public void requestLogin(String brokerId, String password, String investorId){
 		tradingNativeInterface.subscribeListener(new ICMatLabTradeListener());
 		marketDataNativeInterface.subscribeListener(new ICMarketDataListener());
-		tradingNativeInterface.sendLoginMessage(brokerId, password, investorId);
-		marketDataNativeInterface.sendLoginMessage(brokerId, password, investorId);
+		tradingNativeInterface.sendLoginMessage(brokerId, password, investorId, tradeConnectionURL);
+		marketDataNativeInterface.sendLoginMessage(brokerId, password, investorId, marketDataURL);
 
 	}
 	

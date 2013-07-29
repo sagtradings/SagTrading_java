@@ -61,7 +61,7 @@ public class MockTradingInterface extends TradingNativeInterface {
 	}
 	
 	@Override
-	public void sendLoginMessage(String brokerId, String password, String investorId) {
+	public void sendLoginMessage(String brokerId, String password, String investorId, String url) {
 		mdInterface.subscribeListener(new ICmdListener());
 		mdInterface.initiateTimer();
 		LoginResponse mockResponse = new LoginResponse();

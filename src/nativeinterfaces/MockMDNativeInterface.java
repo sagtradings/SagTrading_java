@@ -211,9 +211,9 @@ public class MockMDNativeInterface extends MarketDataNativeInterface{
 
 	@Override
 	public void sendLoginMessage(String brokerId, String password,
-			String investorId) {
+			String investorId, String url) {
 		// TODO Auto-generated method stub
-		super.sendLoginMessage(brokerId, password, investorId);
+		super.sendLoginMessage(brokerId, password, investorId, url);
 	}
 
 	@Override
