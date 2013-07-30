@@ -27,6 +27,7 @@ public class MockTradingInterface extends TradingNativeInterface {
 				TradeRequest tradeRequest = tradeQueue.get(0);
 				TradeDataResponse mockTradeInsert = new TradeDataResponse();
 				mockTradeInsert.setBrokerID(tradeRequest.getBrokerID());
+				mockTradeInsert.setVolume(tradeRequest.getVolumeTotalOriginal());
 				mockTradeInsert.setBusinessUnit(tradeRequest.getBusinessUnit());
 				mockTradeInsert.setDirection(tradeRequest.getDirection());
 				mockTradeInsert.setInstrumentID(tradeRequest.getInstrumentID());

@@ -27,8 +27,9 @@ public class NativeInterfaceFactory {
 	}
 	
 	public TradingNativeInterface createTradingInterface(int debugFlag) throws InterfaceNotCreatedException{
+		TradingNativeInterface answer;
 		if(debugFlag == 0){
-			tradeInterface = new TradingNativeInterface();
+			answer = new TradingNativeInterface();
 		}
 		else{
 			if(mdInterface == null){
@@ -37,11 +38,11 @@ public class NativeInterfaceFactory {
 			if(! (mdInterface instanceof MockMDNativeInterface)){
 				throw new InterfaceNotCreatedException("Mock Trader can not be created because market data is not compatible try using debug flag 1 for createMDInterface ");
 			}
-			tradeInterface = new MockTradingInterface((MockMDNativeInterface) mdInterface);
+			answer = new MockTradingInterface((MockMDNativeInterface) mdInterface);
 		}
 			
 		
-		return tradeInterface;
+		return answer;
 	}
 	
 	public MarketDataNativeInterface getMDInterface() throws InterfaceNotCreatedException{

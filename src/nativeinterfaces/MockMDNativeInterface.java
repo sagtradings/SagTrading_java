@@ -82,11 +82,12 @@ public class MockMDNativeInterface extends MarketDataNativeInterface{
 	 private List<MarketDataResponse> testData;
 	 
 	 private Timer mdMarketDataCompiler;
-	 
+	 private List<String> subscribedInstruments = new ArrayList<String>(10);
 	 public MockMDNativeInterface(String fileHandle){
 
 		 String line;
 		 testData = new ArrayList<MarketDataResponse>(10);
+		 
 		 try {
 			 BufferedReader br = new BufferedReader(new FileReader(fileHandle));
 			 while((line = br.readLine()) != null){
@@ -182,7 +183,9 @@ public class MockMDNativeInterface extends MarketDataNativeInterface{
 						pop.setMillisecConversionTime(System.currentTimeMillis());
 						
 					 for(int i = 0, n = listeners.size(); i  < n; i++){
-						 listeners.get(i).onRtnDepthMarketData(pop);
+						 if(subscribedInstruments.contains(pop.getInstrumentId())){
+							 listeners.get(i).onRtnDepthMarketData(pop);
+						 }
 					 }
 					 testData.remove(0);
 				 }
@@ -213,19 +216,23 @@ public class MockMDNativeInterface extends MarketDataNativeInterface{
 	public void sendLoginMessage(String brokerId, String password,
 			String investorId, String url) {
 		// TODO Auto-generated method stub
-		super.sendLoginMessage(brokerId, password, investorId, url);
+		//super.sendLoginMessage(brokerId, password, investorId, url);
 	}
 
 	@Override
 	public void sendQuoteRequest(String[] insturments) {
 		// TODO Auto-generated method stub
-		super.sendQuoteRequest(insturments);
+		for(int i = 0, n = insturments.length; i < n; i++){
+			subscribedInstruments.add(insturments[i]);
+		}
 	}
 
 	@Override
 	public void sendUnsubscribeQuoteRequest(String[] insturments) {
 		// TODO Auto-generated method stub
-		super.sendUnsubscribeQuoteRequest(insturments);
+		for(int i = 0, n = insturments.length; i < n; i++){
+			subscribedInstruments.remove(insturments[i]);
+		}
 	}
 
 }
