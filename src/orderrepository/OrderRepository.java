@@ -130,7 +130,7 @@ public class OrderRepository {
 				TradeRequest init = buckets.get(i).getInitialRequest();
 				TradeRequest exit = buckets.get(i).getExitRequest();
 				TradeRequest stop = buckets.get(i).getStopLossRequest();
-				if(init.getOrderRef().equals(orderRef) || exit.getOrderRef().equals(orderRef) || stop.getOrderRef().equals(orderRef)){
+				if(init.getOrderRef().equals(orderRef) || (exit != null && exit.getOrderRef().equals(orderRef)) || (stop != null && stop.getOrderRef().equals(orderRef))){
 					return buckets.get(i);
 				}
 			}
