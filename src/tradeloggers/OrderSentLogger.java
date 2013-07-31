@@ -171,6 +171,9 @@ public class OrderSentLogger implements CsvLogger<OrderInsertResponse> {
 			dataBuffer.append(object.getVolumeTotalOriginal()).append(",");
 			dataBuffer.append(object.getVolumeTraded()).append(",");
 			dataBuffer.append(object.getZceTotalTradedVolume()).append("\n");
+			
+			bufferWriter.write(dataBuffer.toString());
+			bufferWriter.close();
 		}
 		catch (IOException e) {
 			// TODO Auto-generated catch block

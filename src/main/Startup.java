@@ -2,18 +2,25 @@ package main;
 
 
 
+import properties.PropertiesManager;
 import listeners.DefaultCTPListener;
 import listeners.NonEsperMarketDataListener;
 import nativeinterfaces.MarketDataNativeInterface;
+import nativeinterfaces.TradingNativeInterface;
 
-import org.apache.log4j.Logger;
+//import org.apache.log4j.Logger;
 
 public class Startup {
 	
-	private static Logger log = Logger.getLogger(Startup.class);
-    static {
+	//private static Logger log = Logger.getLogger(Startup.class);
+	private static final String marketURL = "tcp://180.166.165.179:41213";
+	private static final String tradeConnectionURL = "tcp://180.166.165.179:41205";
+	
+	//private static final String marketURL = "xxx";
+	static {
         try {
             System.loadLibrary("CTPDLL");
+            System.loadLibrary("CTPTRADEDLL");
             System.out.println("library loadedxfxxxxx");
         } catch (UnsatisfiedLinkError e) {
             e.printStackTrace();
@@ -23,8 +30,9 @@ public class Startup {
     public static void main(String[] args) {
         System.out.println(System.getProperty("java.library.path"));
         System.out.println(System.getProperty("path"));
+        PropertiesManager.getInstance();
        // log.info("A test messae");
-        log.debug("A test messacgsex");
+        //log.debug("A test messacgsex");
         DefaultCTPListener ctpListener = new NonEsperMarketDataListener();
         MarketDataNativeInterface nativeInterface = new MarketDataNativeInterface();
       System.out.println("Gussiaas");
@@ -35,7 +43,8 @@ public class Startup {
         bardatamanager.BarDataManager.getInstance().initializeEntry("IF1307", 5000);
         bardatamanager.BarDataManager.getInstance().initializeEntry("IF1309", 10000);
         
-        new MarketDataNativeInterface().sendLoginMessage("1013", "123321", "00000008");
+        new MarketDataNativeInterface().sendLoginMessage("1013", "123321", "00000008", PropertiesManager.getInstance().getProperty("marketdataurl"));
+        new TradingNativeInterface().sendLoginMessage("1013", "123321", "00000008", PropertiesManager.getInstance().getProperty("tradedataurl"));
         new MarketDataNativeInterface().sendQuoteRequest(quote1);
         new MarketDataNativeInterface().sendQuoteRequest(quote2);
         long currentTime = System.currentTimeMillis();
@@ -53,11 +62,11 @@ public class Startup {
        // new MarketDataNativeInterface().unSubscribeListener(null);
         
         nativeInterface.subscribeListener(ctpListener);
-        new MarketDataNativeInterface().sendLoginMessage("1013", "123321", "00000008");
+        new MarketDataNativeInterface().sendLoginMessage("1013", "123321", "00000008", marketURL);
       //  new MarketDataNativeInterface().unSubscribeListener(null);
         
         nativeInterface.subscribeListener(ctpListener);
-        new MarketDataNativeInterface().sendLoginMessage("1013", "123321", "00000008");
+        new MarketDataNativeInterface().sendLoginMessage("1013", "123321", "00000008", marketURL);
        // new MarketDataNativeInterface().unSubscribeListener(null);
         while(true);
 

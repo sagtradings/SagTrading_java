@@ -26,13 +26,16 @@ import orderrepository.IncompleteBucketException;
 import orderrepository.OrderBucket;
 import orderrepository.OrderRepository;
 import orderrepository.OrderTimeOutThread;
+import properties.PropertiesManager;
 import tradeevaluators.IEvaluateTrade;
 import tradeevaluators.TradeEvaluatorRegistry;
 import tradeloggers.CsvLogger;
 import tradeloggers.OrderActionRequestLogger;
 import tradeloggers.OrderFilledLogger;
 import tradeloggers.OrderRequestLogger;
+import tradeloggers.TradeDataResponseLogger;
 import OrderPositionRegistry.InstrumentPositionRegistry;
+import OrderPositionRegistry.LocalInstrumentPositionRegistry;
 import bo.ErrorResult;
 import bo.LoginResponse;
 import bo.MarketDataResponse;
@@ -46,17 +49,21 @@ import factories.TradeRequestFactory;
 
 public class MatlabTradeIntegrator {
 	private  OrderRepository orderRepository = OrderRepository.getInstance();
+
 	
+	private static final String tradeConnectionURL = PropertiesManager.getInstance().getProperty("tradedataurl");
+	private static final String marketDataURL = PropertiesManager.getInstance().getProperty("marketdataurl");
 	private MarketDataNativeInterface marketDataNativeInterface;
 	private static final String INVESTOR_ID = "00000008";
 	private static final String PASS = "123321";
 	private TradingNativeInterface tradingNativeInterface;
 	private static final String BROKER_ID = "1013";
+	private LocalInstrumentPositionRegistry localInstrumentPositionRegistry = new LocalInstrumentPositionRegistry();
 	private CsvLogger actionRequestLogger = new OrderActionRequestLogger();
 	private CsvLogger actionResponseLogger = new OrderActionRequestLogger();
 	private CsvLogger tradeRequestLogger = new OrderRequestLogger();
-	private CsvLogger tradeAcceptedLogger = new OrderRequestLogger();
-	private CsvLogger tradeFilledLogger = new OrderFilledLogger();
+	private CsvLogger tradeAcceptedLogger = new OrderFilledLogger();
+	private CsvLogger tradeFilledLogger = new TradeDataResponseLogger();
 	
 	static{
 		System.loadLibrary("CTPDLL");
@@ -83,6 +90,14 @@ public class MatlabTradeIntegrator {
 	
 	public double getPosition(String instrument){
 		Double answer = InstrumentPositionRegistry.getInstance().getPosition(instrument);
+		if(answer == null){
+			return 0;
+		}
+		return answer;
+	}
+	
+	public double getLocalPosition(String instrument){
+		Double answer = localInstrumentPositionRegistry.getPosition(instrument);
 		if(answer == null){
 			return 0;
 		}
@@ -214,9 +229,10 @@ public class MatlabTradeIntegrator {
 		public void onRtnTradingData(TradeDataResponse response) {
 			tradeFilledLogger.logObject(response, "tradesFilled");
 			double currentPosition = InstrumentPositionRegistry.getInstance().getPosition(response.getInstrumentID());
+			double currentLocalPosition = localInstrumentPositionRegistry.getPosition(response.getInstrumentID());
 			double positionChange = "0".equals(response.getDirection()) ? -response.getVolume():response.getVolume();
 			InstrumentPositionRegistry.getInstance().putPosition(response.getInstrumentID(), currentPosition + positionChange);
-			
+			localInstrumentPositionRegistry.putPosition(response.getInstrumentID(), currentLocalPosition + positionChange);
 			String instrument = response.getInstrumentID();
 			OrderRepository repository = orderRepository;
 			String originatingOrderRef = response.getOrderRef();
@@ -314,8 +330,8 @@ public class MatlabTradeIntegrator {
 	public void requestLogin(String brokerId, String password, String investorId){
 		tradingNativeInterface.subscribeListener(new ICMatLabTradeListener());
 		marketDataNativeInterface.subscribeListener(new ICMarketDataListener());
-		tradingNativeInterface.sendLoginMessage(brokerId, password, investorId);
-		marketDataNativeInterface.sendLoginMessage(brokerId, password, investorId);
+		tradingNativeInterface.sendLoginMessage(brokerId, password, investorId, tradeConnectionURL);
+		marketDataNativeInterface.sendLoginMessage(brokerId, password, investorId, marketDataURL);
 
 	}
 	

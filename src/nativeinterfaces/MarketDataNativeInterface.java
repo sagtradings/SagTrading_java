@@ -9,7 +9,7 @@ public class MarketDataNativeInterface {
 
     public native void unSubscribeListener(DefaultCTPListener obj);
 
-    public native void sendLoginMessage(String brokerId, String password, String investorId);
+    public native void sendLoginMessage(String brokerId, String password, String investorId, String url);
 
     public native void sendQuoteRequest(String[] insturments);
 

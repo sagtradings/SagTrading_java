@@ -27,6 +27,7 @@ public class MockTradingInterface extends TradingNativeInterface {
 				TradeRequest tradeRequest = tradeQueue.get(0);
 				TradeDataResponse mockTradeInsert = new TradeDataResponse();
 				mockTradeInsert.setBrokerID(tradeRequest.getBrokerID());
+				mockTradeInsert.setVolume(tradeRequest.getVolumeTotalOriginal());
 				mockTradeInsert.setBusinessUnit(tradeRequest.getBusinessUnit());
 				mockTradeInsert.setDirection(tradeRequest.getDirection());
 				mockTradeInsert.setInstrumentID(tradeRequest.getInstrumentID());
@@ -61,7 +62,7 @@ public class MockTradingInterface extends TradingNativeInterface {
 	}
 	
 	@Override
-	public void sendLoginMessage(String brokerId, String password, String investorId) {
+	public void sendLoginMessage(String brokerId, String password, String investorId, String url) {
 		mdInterface.subscribeListener(new ICmdListener());
 		mdInterface.initiateTimer();
 		LoginResponse mockResponse = new LoginResponse();
