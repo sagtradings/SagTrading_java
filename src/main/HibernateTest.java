@@ -1,5 +1,7 @@
 package main;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -54,7 +56,7 @@ public class HibernateTest {
 
 
         log.info("Adding BarData to DAO");
-        marketData.setActionDay("Gusiaass");
+        marketData.setActionDay("Gusiaass01");
 
 
         marketDataDAO.addMarketData(marketData);
@@ -67,7 +69,28 @@ public class HibernateTest {
         while (iter.hasNext()) {
             log.info(iter.next());
         }
+    }
 
+    @Test
+    public void getAfterDate(){
+        List<MarketDataResponse> marketData = new ArrayList<>();
+        MarketDataDAO marketDataDAO = new MarketDataDAO();
+
+        marketData = marketDataDAO.getMarketDataAfterDate(Calendar.getInstance().getTime());
+        System.out.println();
+
+    }
+
+    @Test
+    public void getByDateRange(){
+        List<MarketDataResponse> marketData = new ArrayList<>();
+        MarketDataDAO marketDataDAO = new MarketDataDAO();
+        Calendar startDate =  Calendar.getInstance();
+        startDate.add(Calendar.DAY_OF_MONTH, -1);
+        Date endDate =  Calendar.getInstance().getTime();
+
+        marketData = marketDataDAO.getMarketDataByDateRange(startDate.getTime(),endDate);
+        System.out.println();
 
     }
 }
