@@ -1,5 +1,6 @@
 package dao;
 
+import java.util.Date;
 import java.util.List;
 
 import bo.BarData;
@@ -51,6 +52,37 @@ public class MarketDataDAO {
         Query query = session.createQuery("From MarketDataResponse b where b.marketdata_id =: marketdata_id");
         query.setInteger("marketdata_id", marketdata_id);
         MarketDataResponse member = (MarketDataResponse) query.uniqueResult();
+        tx.commit();
+        return member;
+    }
+
+    public List<MarketDataResponse> getMarketDataAfterDate(Date date) {
+        long dateTime = date.getTime();
+        Session session = SessionUtil.sessionFactory.getCurrentSession();
+        Transaction tx = session.beginTransaction();
+        Query query = session.createQuery("From MarketDataResponse b where b.creationTimeStamp <= " + dateTime);
+        List<MarketDataResponse> member = (List<MarketDataResponse>) query.list();
+        tx.commit();
+        return member;
+    }
+
+    public List<MarketDataResponse> getMarketDataBeforeDate(Date date) {
+        long dateTime = date.getTime();
+        Session session = SessionUtil.sessionFactory.getCurrentSession();
+        Transaction tx = session.beginTransaction();
+        Query query = session.createQuery("From MarketDataResponse b where b.creationTimeStamp > " + dateTime);
+        List<MarketDataResponse> member = (List<MarketDataResponse>) query.list();
+        tx.commit();
+        return member;
+    }
+
+    public List<MarketDataResponse> getMarketDataByDateRange(Date startDate, Date endDate) {
+        long startDateTime = startDate.getTime();
+        long endDateTime = endDate.getTime();
+        Session session = SessionUtil.sessionFactory.getCurrentSession();
+        Transaction tx = session.beginTransaction();
+        Query query = session.createQuery("From MarketDataResponse b where b.creationTimeStamp >= " + startDateTime + " and b.creationTimeStamp <= " + endDateTime);
+        List<MarketDataResponse> member = (List<MarketDataResponse>) query.list();
         tx.commit();
         return member;
     }
