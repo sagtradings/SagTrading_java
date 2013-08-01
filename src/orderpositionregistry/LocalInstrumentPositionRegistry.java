@@ -1,19 +1,14 @@
-package OrderPositionRegistry;
+package orderpositionregistry;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class InstrumentPositionRegistry {
-	private static InstrumentPositionRegistry instance;
+public class LocalInstrumentPositionRegistry {
+
 	private Map<String, Double> positions = new HashMap<String, Double>(10);
-	public static synchronized InstrumentPositionRegistry getInstance(){
-		if(instance == null){
-			instance = new InstrumentPositionRegistry();
-		}
-		return instance;
-	}
+
 	
-	private InstrumentPositionRegistry(){
+	public LocalInstrumentPositionRegistry(){
 		
 	}
 	
@@ -28,5 +23,4 @@ public class InstrumentPositionRegistry {
 	public void putPosition(String instrument, Double position){
 		positions.put(instrument, position);
 	}
-	
 }

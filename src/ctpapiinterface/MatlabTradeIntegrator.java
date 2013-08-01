@@ -19,6 +19,8 @@ import nativeinterfaces.MockMDNativeInterface;
 import nativeinterfaces.MockTradingInterface;
 import nativeinterfaces.NativeInterfaceFactory;
 import nativeinterfaces.TradingNativeInterface;
+import orderpositionregistry.InstrumentPositionRegistry;
+import orderpositionregistry.LocalInstrumentPositionRegistry;
 import orderrefgenerator.MessageIDGenerator;
 import orderrefgenerator.OrderRefGenerator;
 import orderrepository.ISignablePrice;
@@ -34,8 +36,6 @@ import tradeloggers.OrderActionRequestLogger;
 import tradeloggers.OrderFilledLogger;
 import tradeloggers.OrderRequestLogger;
 import tradeloggers.TradeDataResponseLogger;
-import OrderPositionRegistry.InstrumentPositionRegistry;
-import OrderPositionRegistry.LocalInstrumentPositionRegistry;
 import bo.ErrorResult;
 import bo.LoginResponse;
 import bo.MarketDataResponse;
@@ -112,7 +112,7 @@ public class MatlabTradeIntegrator {
 		return bucket.getOrderState();
 	}
 	
-	public String sendOrderSet(String insturment, String initSide, int signalType, int signalPrice, int initSize, long timeOut, double tgp, double tlp){
+	public String sendOrderSet(String insturment, int initSide, int signalType, int signalPrice, int initSize, long timeOut, double tgp, double tlp){
 		String initOrderRef = OrderRefGenerator.getInstance().getNextRef();
 		String exitOrderRef = OrderRefGenerator.getInstance().getNextRef();
 		String stopLossOrderRef = OrderRefGenerator.getInstance().getNextRef();
@@ -128,14 +128,14 @@ public class MatlabTradeIntegrator {
 		bucket.setOrderState(OrderBucket.orderStates.WAITING);
 		bucket.setInitialRequest(initialRequest);
 		
-		TradeRequest exitRequest = factory.createRequest(insturment, signalPrice + tgp, "0".equals(initSide) ? "1" : "0" );
+		TradeRequest exitRequest = factory.createRequest(insturment, signalPrice + tgp, initSide == 0 || initSide == 1 ? 2 : 0 );
 		exitRequest.setOrderRef(exitOrderRef);
 		exitRequest.setRequestID(MessageIDGenerator.getInstance().getNextID());
 		exitRequest.setOriginatingOrderRef(initOrderRef);
 		exitRequest.setVolumeTotalOriginal(initSize);
 		bucket.setExitRequest(exitRequest);
 		
-		TradeRequest stopRequest = factory.createRequest(insturment, signalPrice - tlp, "0".equals(initSide) ? "1" : "0");
+		TradeRequest stopRequest = factory.createRequest(insturment, signalPrice - tlp, initSide == 0 || initSide == 1 ? 2 : 0);
 		stopRequest.setOrderRef(stopLossOrderRef);
 		stopRequest.setRequestID(MessageIDGenerator.getInstance().getNextID());
 		stopRequest.setOriginatingOrderRef(initOrderRef);
@@ -169,7 +169,7 @@ public class MatlabTradeIntegrator {
 		actionRequestLogger.logObject(request, "actionRequests");
 	}
 	
-	public String sendSingleOrder(String direction, String  instrument, double price, long timeOut){
+	public String sendSingleOrder(int direction, String  instrument, double price, long timeOut){
 		String nextOrder = OrderRefGenerator.getInstance().getNextRef();
 		TradeRequestFactory factory = new TradeRequestFactory();
 		TradeRequest request = factory.createRequest(instrument, price, direction);
@@ -335,7 +335,7 @@ public class MatlabTradeIntegrator {
 
 	}
 	
-	public String sendOrder(String instrumentId, String orderType, int signalType, int signalPrice,  int initSize,  long timeOut){
+	public String sendOrder(String instrumentId, int orderType, int signalType, int signalPrice,  int initSize,  long timeOut){
 		long milliseconds = System.currentTimeMillis();
 		String initOrderRef = OrderRefGenerator.getInstance().getNextRef();
 		try {
