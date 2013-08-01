@@ -19,7 +19,16 @@ public class OrderBucket {
 	private orderStates orderState;
 	private long timeOut;
 	private long creationTime;
+	private int orderDirection;
 	
+	public int getOrderDirection() {
+		return orderDirection;
+	}
+
+	public void setOrderDirection(int orderDirection) {
+		this.orderDirection = orderDirection;
+	}
+
 	public OrderBucket(){
 		this.creationTime = System.currentTimeMillis();
 	}

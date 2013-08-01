@@ -19,6 +19,7 @@ import nativeinterfaces.MockMDNativeInterface;
 import nativeinterfaces.MockTradingInterface;
 import nativeinterfaces.NativeInterfaceFactory;
 import nativeinterfaces.TradingNativeInterface;
+import orderpositionregistry.IVolumeCalculator;
 import orderpositionregistry.InstrumentPositionRegistry;
 import orderpositionregistry.LocalInstrumentPositionRegistry;
 import orderrefgenerator.MessageIDGenerator;
@@ -116,14 +117,16 @@ public class MatlabTradeIntegrator {
 		String initOrderRef = OrderRefGenerator.getInstance().getNextRef();
 		String exitOrderRef = OrderRefGenerator.getInstance().getNextRef();
 		String stopLossOrderRef = OrderRefGenerator.getInstance().getNextRef();
-		
+		double currentPosition = localInstrumentPositionRegistry.getPosition(insturment);
+		IVolumeCalculator volumeCalculator = localInstrumentPositionRegistry.getCalculator(initSide);
 		TradeRequestFactory factory = new TradeRequestFactory();
 		TradeRequest initialRequest = factory.createRequest(insturment, signalPrice, initSide);
-		initialRequest.setVolumeTotalOriginal(initSize);
+		initialRequest.setVolumeTotalOriginal((int) volumeCalculator.computeVolume(initialRequest, currentPosition));
 		initialRequest.setOrderRef(initOrderRef);
 		initialRequest.setOriginatingOrderRef(initOrderRef);
 		initialRequest.setRequestID(MessageIDGenerator.getInstance().getNextID());
 		OrderBucket bucket = new OrderBucketFactory().createBucket(signalType, signalPrice);
+		bucket.setOrderDirection(initSide);
 		bucket.setTimeOut(timeOut);
 		bucket.setOrderState(OrderBucket.orderStates.WAITING);
 		bucket.setInitialRequest(initialRequest);
@@ -342,11 +345,14 @@ public class MatlabTradeIntegrator {
 			
 			TradeRequestFactory factory = new TradeRequestFactory();
 			TradeRequest initialRequest = factory.createRequest(instrumentId, signalPrice, orderType);
-			initialRequest.setVolumeTotalOriginal(initSize);
+			double currentPosition = localInstrumentPositionRegistry.getPosition(instrumentId);
+			IVolumeCalculator volumeCalculator = localInstrumentPositionRegistry.getCalculator(orderType);
+			initialRequest.setVolumeTotalOriginal((int) volumeCalculator.computeVolume(initialRequest, currentPosition));
 			initialRequest.setOrderRef(initOrderRef);
 			initialRequest.setOriginatingOrderRef(initOrderRef);
 			initialRequest.setRequestID(MessageIDGenerator.getInstance().getNextID());
 			OrderBucket bucket = new OrderBucketFactory().createBucket(signalType, signalPrice);
+			bucket.setOrderDirection(orderType);
 			bucket.setTimeOut(timeOut);
 			bucket.setOrderState(OrderBucket.orderStates.WAITING);
 			bucket.setInitialRequest(initialRequest);

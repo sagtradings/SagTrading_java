@@ -4,6 +4,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import dao.MarketDataDAO;
+
 import properties.PropertiesManager;
 
 import listeners.DefaultCTPListener;
@@ -40,7 +42,8 @@ public class EventMatlabIntegrator {
 		}
 		@Override
 		public void onRtnDepthMarketData(MarketDataResponse response) {
-
+			MarketDataDAO dao = new MarketDataDAO();
+			dao.addMarketData(response);
 			double deltaAskPrice1 = (response.getLastPrice() - response.getAskPrice1());
 			double deltaBidPrice1 = response.getLastPrice() - response.getBidPrice1();
 			if(Math.abs(deltaAskPrice1) < deltaBidPrice1){

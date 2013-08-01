@@ -3,9 +3,9 @@ package factories;
 import bo.TradeRequest;
 
 public class TradeRequestFactory {
-	public TradeRequest createRequest(String instrument, double price, String direction){
+	public TradeRequest createRequest(String instrument, double price, int orderSide){
 		TradeRequest answer = new TradeRequest();
-		answer.setDirection(direction);
+		answer.setDirection(orderSide == 0 || orderSide == 1 ? "0" : "1");
 		answer.setOrderPriceType("2");
 		answer.setCombOffsetFlag("0");
 		answer.setCombHedgeFlag("1");
