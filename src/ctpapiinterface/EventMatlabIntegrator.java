@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import dao.BarDataDAO;
 import dao.MarketDataDAO;
 
 import properties.PropertiesManager;
@@ -65,6 +66,8 @@ public class EventMatlabIntegrator {
 				
 				BarData compiledData = barManager.sendMarketData(response);
 				if(compiledData != null){
+					BarDataDAO bao = new BarDataDAO();
+					bao.addBarData(compiledData);
 					notifyMatlabBarData(compiledData);
 				}
 			} catch (EntryNotInitializedException e) {
