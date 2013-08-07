@@ -64,6 +64,7 @@ public class BarDataEntry {
 		answer.setHigh(barDataEntry.getHigh());
 		answer.setLow(barDataEntry.getLow());
 		answer.setInstrumentId(marketData.get(0).getInstrumentId());
+        answer.setDay(barDataEntry.getDay());
 		return answer;
 	}
 	
