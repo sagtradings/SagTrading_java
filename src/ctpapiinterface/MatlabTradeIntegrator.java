@@ -121,6 +121,7 @@ public class MatlabTradeIntegrator {
 		IVolumeCalculator volumeCalculator = localInstrumentPositionRegistry.getCalculator(initSide);
 		TradeRequestFactory factory = new TradeRequestFactory();
 		TradeRequest initialRequest = factory.createRequest(insturment, signalPrice, initSide);
+		initialRequest.setVolumeTotalOriginal(initSize);
 		initialRequest.setVolumeTotalOriginal((int) volumeCalculator.computeVolume(initialRequest, currentPosition));
 		initialRequest.setOrderRef(initOrderRef);
 		initialRequest.setOriginatingOrderRef(initOrderRef);
@@ -345,6 +346,7 @@ public class MatlabTradeIntegrator {
 			
 			TradeRequestFactory factory = new TradeRequestFactory();
 			TradeRequest initialRequest = factory.createRequest(instrumentId, signalPrice, orderType);
+			initialRequest.setVolumeTotalOriginal(initSize);
 			double currentPosition = localInstrumentPositionRegistry.getPosition(instrumentId);
 			IVolumeCalculator volumeCalculator = localInstrumentPositionRegistry.getCalculator(orderType);
 			initialRequest.setVolumeTotalOriginal((int) volumeCalculator.computeVolume(initialRequest, currentPosition));
