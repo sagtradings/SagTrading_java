@@ -60,10 +60,10 @@ public class BarDataDAO {
     }
 
     public BarData getHighestBarData(String instrumentId, Date startDate, int numberOfPreviousRecord){
-        long startDateTime = startDate.getTime();
+        //long startDateTime = startDate.getTime();
         Session session = SessionUtil.sessionFactory.getCurrentSession();
         Transaction tx = session.beginTransaction();
-        Query query = session.createQuery("From BarData b where b.day <= " + startDateTime + " and b.instrumentId = " + instrumentId);
+        Query query = session.createQuery("From BarData b where b.day <= " + startDate + " and b.instrumentId = " + instrumentId);
         query.setMaxResults(numberOfPreviousRecord);
         List<BarData> members = (List<BarData>) query.list();
         tx.commit();
@@ -79,10 +79,10 @@ public class BarDataDAO {
     }
 
     public BarData getLowestBarData(String instrumentId, Date startDate, int numberOfPreviousRecord){
-        long startDateTime = startDate.getTime();
+        //long startDateTime = startDate.getTime();
         Session session = SessionUtil.sessionFactory.getCurrentSession();
         Transaction tx = session.beginTransaction();
-        Query query = session.createQuery("From BarData b where b.day <= " + startDateTime + " and b.instrumentId = " + instrumentId);
+        Query query = session.createQuery("From BarData b where b.day <= " + startDate + " and b.instrumentId = " + instrumentId);
         query.setMaxResults(numberOfPreviousRecord);
         List<BarData> members = (List<BarData>) query.list();
         tx.commit();
