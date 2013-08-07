@@ -15,6 +15,7 @@
         <property name="close" column="CLOSE"/>
         <property name="upVolume" column="UPVOLUME"/>
         <property name="instrumentId" column="INSTRUMENTID"/>
+        <property name="day" column="DAY"/>
     </class>
 </hibernate-mapping>
 
