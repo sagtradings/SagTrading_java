@@ -13,7 +13,7 @@
 
         <!--other database related information-->
         <!--<property name="dialect">org.hibernate.dialect.MySQLMyISAMDialect</property>-->
-        <property name="show_sql">true</property>
+        <property name="show_sql">false</property>
         <property name="format_sql">true</property>
 
         <!-- Session Context class -->
