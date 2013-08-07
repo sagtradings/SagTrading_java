@@ -40,6 +40,9 @@ public class BarDataManager {
 			Date evictionDate = Calendar.getInstance().getTime();
 			evictionDate.setTime(mdResponse.getMillisecConversionTime());
 			evictionAnswer.setTimestamp(formatter.format(evictionDate));
+			Date day = new Date();
+			day.setTime(mdResponse.getMillisecConversionTime());
+			evictionAnswer.setDay(day);
 			entry.reset();
 		}
 		double tickPrice = mdResponse.getLastPrice();

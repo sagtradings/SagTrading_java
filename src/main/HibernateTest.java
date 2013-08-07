@@ -73,7 +73,7 @@ public class HibernateTest {
 
     @Test
     public void getAfterDate(){
-        List<MarketDataResponse> marketData = new ArrayList<>();
+        List<MarketDataResponse> marketData = new ArrayList<MarketDataResponse>();
         MarketDataDAO marketDataDAO = new MarketDataDAO();
 
         marketData = marketDataDAO.getMarketDataAfterDate(Calendar.getInstance().getTime());
@@ -83,7 +83,7 @@ public class HibernateTest {
 
     @Test
     public void getByDateRange(){
-        List<MarketDataResponse> marketData = new ArrayList<>();
+        List<MarketDataResponse> marketData = new ArrayList<MarketDataResponse>();
         MarketDataDAO marketDataDAO = new MarketDataDAO();
         Calendar startDate =  Calendar.getInstance();
         startDate.add(Calendar.DAY_OF_MONTH, -1);

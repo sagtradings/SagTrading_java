@@ -30,6 +30,7 @@ public class NativeInterfaceFactory {
 		TradingNativeInterface answer;
 		if(debugFlag == 0){
 			answer = new TradingNativeInterface();
+			
 		}
 		else{
 			if(mdInterface == null){
@@ -41,7 +42,7 @@ public class NativeInterfaceFactory {
 			answer = new MockTradingInterface((MockMDNativeInterface) mdInterface);
 		}
 			
-		
+		tradeInterface = answer;
 		return answer;
 	}
 	

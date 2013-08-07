@@ -1,5 +1,7 @@
 package bo;
 
+import java.util.Date;
+
 /**
  * BarData domain
  */
@@ -14,8 +16,17 @@ public class BarData {
     private String timestamp;
     private long creationTimeStamp;
     private double downVolume;
+    private Date day;
 
-    public BarData() {
+    public Date getDay() {
+		return day;
+	}
+
+	public void setDay(Date day) {
+		this.day = day;
+	}
+
+	public BarData() {
         this.creationTimeStamp = System.currentTimeMillis();
     }
 

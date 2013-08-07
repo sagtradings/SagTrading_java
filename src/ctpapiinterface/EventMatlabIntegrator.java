@@ -4,6 +4,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import dao.BarDataDAO;
+import dao.MarketDataDAO;
+
 import properties.PropertiesManager;
 
 import listeners.DefaultCTPListener;
@@ -40,7 +43,8 @@ public class EventMatlabIntegrator {
 		}
 		@Override
 		public void onRtnDepthMarketData(MarketDataResponse response) {
-
+			MarketDataDAO dao = new MarketDataDAO();
+			dao.addMarketData(response);
 			double deltaAskPrice1 = (response.getLastPrice() - response.getAskPrice1());
 			double deltaBidPrice1 = response.getLastPrice() - response.getBidPrice1();
 			if(Math.abs(deltaAskPrice1) < deltaBidPrice1){
@@ -62,6 +66,8 @@ public class EventMatlabIntegrator {
 				
 				BarData compiledData = barManager.sendMarketData(response);
 				if(compiledData != null){
+					BarDataDAO bao = new BarDataDAO();
+					bao.addBarData(compiledData);
 					notifyMatlabBarData(compiledData);
 				}
 			} catch (EntryNotInitializedException e) {

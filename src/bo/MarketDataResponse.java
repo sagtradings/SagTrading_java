@@ -1,5 +1,7 @@
 package bo;
 
+import java.util.Date;
+
 public class MarketDataResponse {
 
     private int marketdata_id;
@@ -51,12 +53,21 @@ public class MarketDataResponse {
     private int volume;
     private double upVolume;
     private double downVolume;
+    private Date day;
 
     public MarketDataResponse() {
         this.creationTimeStamp = System.currentTimeMillis();
     }
 
-    public int getMarketdata_id() {
+    public Date getDay() {
+		return day;
+	}
+
+	public void setDay(Date day) {
+		this.day = day;
+	}
+
+	public int getMarketdata_id() {
         return marketdata_id;
     }
 
