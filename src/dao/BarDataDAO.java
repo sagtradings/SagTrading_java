@@ -113,7 +113,7 @@ public class BarDataDAO {
         try {
             startDate = formatter.parse("2013-08-07 11:29:13");
         } catch (ParseException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
 
         Session session = SessionUtil.sessionFactory.getCurrentSession();
