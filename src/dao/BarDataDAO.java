@@ -83,7 +83,7 @@ public class BarDataDAO {
     public BarData getLowestBarData(String instrumentId, Date startDate, int numberOfPreviousRecord){
         Session session = SessionUtil.sessionFactory.getCurrentSession();
         Transaction tx = session.beginTransaction();
-        Query query = session.createQuery("From BarData b where b.day <= " + startDate + " and b.instrumentId = '" + instrumentId+"' order by b.day DESC");
+        Query query = session.createQuery("From BarData b where b.day <= '" + startDate + "' and b.instrumentId = '" + instrumentId+"' order by b.day DESC");
         query.setMaxResults(numberOfPreviousRecord);
         List<BarData> members = (List<BarData>) query.list();
         tx.commit();
