@@ -88,7 +88,7 @@ public class BarDataDAO {
         String startDateStr = df.format(startDate);
         Session session = SessionUtil.sessionFactory.getCurrentSession();
         Transaction tx = session.beginTransaction();
-        Query query = session.createQuery("From BarData b where b.day <= " + startDateStr + " and b.instrumentId = '" + instrumentId+"' order by b.day DESC");
+        Query query = session.createQuery("From BarData b where b.day <= '" + startDateStr + "' and b.instrumentId = '" + instrumentId+"' order by b.day DESC");
         query.setMaxResults(numberOfPreviousRecord);
         List<BarData> members = (List<BarData>) query.list();
         tx.commit();
