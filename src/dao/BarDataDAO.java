@@ -91,8 +91,8 @@ public class BarDataDAO {
         return Collections.min(members, new Comparator<BarData>() {
             @Override
             public int compare(BarData o1, BarData o2) {
-                if(o1.getHigh() > o2.getHigh()) return 1;
-                if(o1.getHigh() < o2.getHigh()) return -1;
+                if(o1.getLow() > o2.getLow()) return 1;
+                if(o1.getLow() < o2.getLow()) return -1;
                 return 0;
             }
         });
@@ -118,7 +118,7 @@ public class BarDataDAO {
         List<BarData> members = (List<BarData>) query.list();
         tx.commit();
 
-        BarData barData = Collections.max(members, new Comparator<BarData>() {
+        BarData barData = Collections.min(members, new Comparator<BarData>() {
             @Override
             public int compare(BarData o1, BarData o2) {
                 if(o1.getHigh() > o2.getHigh()) return 1;
