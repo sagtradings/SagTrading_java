@@ -1,5 +1,7 @@
 package dao;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -13,6 +15,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import bo.BarData;
+import org.junit.Test;
 
 
 public class BarDataDAO {
@@ -60,10 +63,9 @@ public class BarDataDAO {
     }
 
     public BarData getHighestBarData(String instrumentId, Date startDate, int numberOfPreviousRecord){
-        //long startDateTime = startDate.getTime();
         Session session = SessionUtil.sessionFactory.getCurrentSession();
         Transaction tx = session.beginTransaction();
-        Query query = session.createQuery("From BarData b where b.day <= '" + startDate + "' and b.instrumentId = '" + instrumentId+"'");
+        Query query = session.createQuery("From BarData b where b.day <= '" + startDate + "' and b.instrumentId = '" + instrumentId+"' order by b.day DESC");
         query.setMaxResults(numberOfPreviousRecord);
         List<BarData> members = (List<BarData>) query.list();
         tx.commit();
@@ -79,10 +81,9 @@ public class BarDataDAO {
     }
 
     public BarData getLowestBarData(String instrumentId, Date startDate, int numberOfPreviousRecord){
-        //long startDateTime = startDate.getTime();
         Session session = SessionUtil.sessionFactory.getCurrentSession();
         Transaction tx = session.beginTransaction();
-        Query query = session.createQuery("From BarData b where b.day <= " + startDate + " and b.instrumentId = " + instrumentId);
+        Query query = session.createQuery("From BarData b where b.day <= " + startDate + " and b.instrumentId = '" + instrumentId+"' order by b.day DESC");
         query.setMaxResults(numberOfPreviousRecord);
         List<BarData> members = (List<BarData>) query.list();
         tx.commit();
@@ -95,6 +96,37 @@ public class BarDataDAO {
                 return 0;
             }
         });
+    }
+
+    @Test
+    public void getHighestBarDataTest(){
+
+        String instrumentId = "IF1309";
+        int numberOfPreviousRecord = 3;
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd KK:mm:ss");
+        Date startDate = null;
+        try {
+            startDate = formatter.parse("2013-08-07 11:29:23");
+        } catch (ParseException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+        Session session = SessionUtil.sessionFactory.getCurrentSession();
+        Transaction tx = session.beginTransaction();
+        Query query = session.createQuery("From BarData b where b.day <= '"+ startDate+"' and b.instrumentId = '" + instrumentId+"' order by b.day DESC");
+        query.setMaxResults(numberOfPreviousRecord);
+        List<BarData> members = (List<BarData>) query.list();
+        tx.commit();
+
+        BarData barData = Collections.max(members, new Comparator<BarData>() {
+            @Override
+            public int compare(BarData o1, BarData o2) {
+                if(o1.getHigh() > o2.getHigh()) return 1;
+                if(o1.getHigh() < o2.getHigh()) return -1;
+                return 0;
+            }
+        });
+        System.out.println();
     }
 }
 
