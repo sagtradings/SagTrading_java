@@ -26,14 +26,33 @@ public class EventMatlabIntegrator {
 	
 	BarDataManager barManager;
 	private static final  String connectionURL =PropertiesManager.getInstance().getProperty("marketdataurl");
-	
-	
+	private String instrumentOfInterest;
+	private MarketDataDAO dao = new MarketDataDAO();
+	private BarDataDAO barDao = new BarDataDAO();
 	public EventMatlabIntegrator(){
 		barManager = new BarDataManager();
 		System.loadLibrary("CTPDLL");
 
 	}
 	
+	public double getHighest(String value, int numberOfBars){
+		if(value.equalsIgnoreCase("open")){
+			BarData data = barDao.getHighestOpenBarData(instrumentOfInterest, new Date(), numberOfBars);
+			return data.getOpen();
+		}
+		else if(value.equalsIgnoreCase("low")){
+			BarData data = barDao.getHighestOpenBarData(instrumentOfInterest, new Date(), numberOfBars);
+			return data.getLow();
+		}
+		else if(value.equalsIgnoreCase("close")){
+			BarData data = barDao.getHighestOpenBarData(instrumentOfInterest, new Date(), numberOfBars);
+			return data.getClose();
+		}
+		
+		BarData data = barDao.getHighestHighBarData(instrumentOfInterest, new Date(), numberOfBars);
+		return data.getHigh();
+	}
+	 
 	private class ICMDListener extends DefaultCTPListener{
 
 		private SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHH:mm:ss");
@@ -43,7 +62,7 @@ public class EventMatlabIntegrator {
 		}
 		@Override
 		public void onRtnDepthMarketData(MarketDataResponse response) {
-			MarketDataDAO dao = new MarketDataDAO();
+			
 			dao.addMarketData(response);
 			double deltaAskPrice1 = (response.getLastPrice() - response.getAskPrice1());
 			double deltaBidPrice1 = response.getLastPrice() - response.getBidPrice1();
@@ -92,6 +111,7 @@ public class EventMatlabIntegrator {
 	public void subscribeBarData(String instrument, long barLength){
 		barManager.initializeEntry(instrument, barLength);
 		subscribeMarketData(instrument);
+		instrumentOfInterest = instrument;
 	}
 	
 	public void requestLogin(String brokerId, String password, String investorId){

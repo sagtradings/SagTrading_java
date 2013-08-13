@@ -63,7 +63,7 @@ public class BarDataDAO {
         return member;
     }
 
-    public BarData getHighestBarData(String instrumentId, Date startDate, int numberOfPreviousRecord){
+    public BarData getHighestHighBarData(String instrumentId, Date startDate, int numberOfPreviousRecord){
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd KK:mm:ss");
         String startDateStr = df.format(startDate);
         Session session = SessionUtil.sessionFactory.getCurrentSession();
@@ -78,6 +78,66 @@ public class BarDataDAO {
             public int compare(BarData o1, BarData o2) {
                 if(o1.getHigh() > o2.getHigh()) return 1;
                 if(o1.getHigh() < o2.getHigh()) return -1;
+                return 0;
+            }
+        });
+    }
+    
+    public BarData getHighestLowBarData(String instrumentId, Date startDate, int numberOfPreviousRecord){
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd KK:mm:ss");
+        String startDateStr = df.format(startDate);
+        Session session = SessionUtil.sessionFactory.getCurrentSession();
+        Transaction tx = session.beginTransaction();
+        Query query = session.createQuery("From BarData b where b.day <= '" + startDateStr + "' and b.instrumentId = '" + instrumentId+"' order by b.day DESC");
+        query.setMaxResults(numberOfPreviousRecord);
+        List<BarData> members = (List<BarData>) query.list();
+        tx.commit();
+
+        return Collections.max(members, new Comparator<BarData>() {
+            @Override
+            public int compare(BarData o1, BarData o2) {
+                if(o1.getLow() > o2.getLow()) return 1;
+                if(o1.getLow() < o2.getLow()) return -1;
+                return 0;
+            }
+        });
+    }
+    
+    public BarData getHighestCloseBarData(String instrumentId, Date startDate, int numberOfPreviousRecord){
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd KK:mm:ss");
+        String startDateStr = df.format(startDate);
+        Session session = SessionUtil.sessionFactory.getCurrentSession();
+        Transaction tx = session.beginTransaction();
+        Query query = session.createQuery("From BarData b where b.day <= '" + startDateStr + "' and b.instrumentId = '" + instrumentId+"' order by b.day DESC");
+        query.setMaxResults(numberOfPreviousRecord);
+        List<BarData> members = (List<BarData>) query.list();
+        tx.commit();
+
+        return Collections.max(members, new Comparator<BarData>() {
+            @Override
+            public int compare(BarData o1, BarData o2) {
+                if(o1.getClose() > o2.getClose()) return 1;
+                if(o1.getClose() < o2.getClose()) return -1;
+                return 0;
+            }
+        });
+    }
+    
+    public BarData getHighestOpenBarData(String instrumentId, Date startDate, int numberOfPreviousRecord){
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd KK:mm:ss");
+        String startDateStr = df.format(startDate);
+        Session session = SessionUtil.sessionFactory.getCurrentSession();
+        Transaction tx = session.beginTransaction();
+        Query query = session.createQuery("From BarData b where b.day <= '" + startDateStr + "' and b.instrumentId = '" + instrumentId+"' order by b.day DESC");
+        query.setMaxResults(numberOfPreviousRecord);
+        List<BarData> members = (List<BarData>) query.list();
+        tx.commit();
+
+        return Collections.max(members, new Comparator<BarData>() {
+            @Override
+            public int compare(BarData o1, BarData o2) {
+                if(o1.getOpen() > o2.getOpen()) return 1;
+                if(o1.getOpen() < o2.getOpen()) return -1;
                 return 0;
             }
         });
