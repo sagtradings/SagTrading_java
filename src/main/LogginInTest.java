@@ -1,5 +1,6 @@
 package main;
 
+import bardatamanager.TimeIntervalNotDivisibleByTenException;
 import matlab.BarDataEvent;
 import matlab.MarketDataEvent;
 import matlab.MatlabEventListener;
@@ -48,13 +49,17 @@ public class LogginInTest {
 			integrator.initialize();
 			integrator.requestLogin("1013", "123321", "00000008");
 			integrator.subscribeMarketData("IF1309");
-			integrator.subscribeBarData("IF1309", 10000);
+			
 			try {
+				integrator.subscribeBarData("IF1309", 10000);
 				// infinite loop to keep gathering market data
 				while(true){ 
 					Thread.sleep(1000);
 				}
 			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (TimeIntervalNotDivisibleByTenException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

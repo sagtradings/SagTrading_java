@@ -2,7 +2,10 @@ package ctpapiinterface;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import dao.BarDataDAO;
 import dao.MarketDataDAO;
@@ -15,8 +18,10 @@ import matlab.MarketDataEvent;
 import matlab.MatlabEventListener;
 import matlab.MatlabOnLoginEvent;
 import nativeinterfaces.MarketDataNativeInterface;
+import bardatamanager.BarDataComposer;
 import bardatamanager.BarDataManager;
 import bardatamanager.EntryNotInitializedException;
+import bardatamanager.TimeIntervalNotDivisibleByTenException;
 import bo.BarData;
 import bo.LoginResponse;
 import bo.MarketDataResponse;
@@ -29,28 +34,72 @@ public class EventMatlabIntegrator {
 	private String instrumentOfInterest;
 	private MarketDataDAO dao = new MarketDataDAO();
 	private BarDataDAO barDao = new BarDataDAO();
+	private List<BarData> inMemoryBarData = new ArrayList<BarData>(10);
 	public EventMatlabIntegrator(){
 		barManager = new BarDataManager();
 		System.loadLibrary("CTPDLL");
 
 	}
 	
-	public double getHighest(String value, int numberOfBars){
+	public double getLowest(String value, int numberOfBars){
+		double lowestValue = Double.MAX_VALUE;
 		if(value.equalsIgnoreCase("open")){
-			BarData data = barDao.getHighestOpenBarData(instrumentOfInterest, new Date(), numberOfBars);
-			return data.getOpen();
+			for(int i = inMemoryBarData.size() - 1; i >= 0 && i >= inMemoryBarData.size() - numberOfBars; i--){
+				if(inMemoryBarData.get(i).getOpen() < lowestValue){
+					lowestValue = inMemoryBarData.get(i).getOpen();
+				}
+			}
+			return lowestValue;
 		}
 		else if(value.equalsIgnoreCase("low")){
-			BarData data = barDao.getHighestOpenBarData(instrumentOfInterest, new Date(), numberOfBars);
-			return data.getLow();
+			for(int i = inMemoryBarData.size() - 1; i >= 0 && i >= inMemoryBarData.size() - numberOfBars; i--){
+				if(inMemoryBarData.get(i).getLow() < lowestValue){
+					lowestValue = inMemoryBarData.get(i).getLow();
+				}
+			}
+			return lowestValue;
 		}
 		else if(value.equalsIgnoreCase("close")){
-			BarData data = barDao.getHighestOpenBarData(instrumentOfInterest, new Date(), numberOfBars);
-			return data.getClose();
+			for(int i = inMemoryBarData.size() - 1; i >= 0 && i >= inMemoryBarData.size() - numberOfBars; i--){
+				if(inMemoryBarData.get(i).getClose() < lowestValue){
+					lowestValue = inMemoryBarData.get(i).getClose();
+				}
+			}
+			return lowestValue;
 		}
 		
-		BarData data = barDao.getHighestHighBarData(instrumentOfInterest, new Date(), numberOfBars);
-		return data.getHigh();
+		return 0;
+	}
+	
+	
+	public double getHighest(String value, int numberOfBars){
+		double highestValue = Double.MIN_VALUE;
+		if(value.equalsIgnoreCase("open")){
+			for(int i = inMemoryBarData.size() - 1; i >= 0 && i >= inMemoryBarData.size() - numberOfBars; i--){
+				if(inMemoryBarData.get(i).getOpen() > highestValue){
+					highestValue = inMemoryBarData.get(i).getOpen();
+				}
+			}
+			return highestValue;
+		}
+		else if(value.equalsIgnoreCase("low")){
+			for(int i = inMemoryBarData.size() - 1; i >= 0 && i >= inMemoryBarData.size() - numberOfBars; i--){
+				if(inMemoryBarData.get(i).getLow() > highestValue){
+					highestValue = inMemoryBarData.get(i).getLow();
+				}
+			}
+			return highestValue;
+		}
+		else if(value.equalsIgnoreCase("close")){
+			for(int i = inMemoryBarData.size() - 1; i >= 0 && i >= inMemoryBarData.size() - numberOfBars; i--){
+				if(inMemoryBarData.get(i).getClose() > highestValue){
+					highestValue = inMemoryBarData.get(i).getClose();
+				}
+			}
+			return highestValue;
+		}
+		
+		return 0;
 	}
 	 
 	private class ICMDListener extends DefaultCTPListener{
@@ -88,6 +137,7 @@ public class EventMatlabIntegrator {
 					BarDataDAO bao = new BarDataDAO();
 					bao.addBarData(compiledData);
 					notifyMatlabBarData(compiledData);
+					inMemoryBarData.add(compiledData);
 				}
 			} catch (EntryNotInitializedException e) {
 				// TODO Auto-generated catch block
@@ -108,10 +158,24 @@ public class EventMatlabIntegrator {
 		new MarketDataNativeInterface().sendQuoteRequest(new String[]{instrument});
 	}
 	
-	public void subscribeBarData(String instrument, long barLength){
+	public void subscribeBarData(String instrument, long barLength) throws TimeIntervalNotDivisibleByTenException{
+		if(barLength % 10000 != 0){
+			throw new TimeIntervalNotDivisibleByTenException("Bar length must be evenly divisble by 10 seconds");
+		}
 		barManager.initializeEntry(instrument, barLength);
 		subscribeMarketData(instrument);
 		instrumentOfInterest = instrument;
+		Date currentDate = Calendar.getInstance().getTime();
+		Calendar endCalendar = Calendar.getInstance();
+		endCalendar.add(Calendar.DATE, -15);
+		Date startDate = endCalendar.getTime();
+		List<BarData> previousBars = barDao.getAllBarDataByDateRange(startDate, currentDate, instrument);
+		BarDataComposer composer = new BarDataComposer();
+		List<BarData> historicalData = composer.composeList(previousBars, barLength);
+		for(int i = 0, n = historicalData.size(); i < n; i++){
+			inMemoryBarData.add(historicalData.get(i));
+		}
+		
 	}
 	
 	public void requestLogin(String brokerId, String password, String investorId){

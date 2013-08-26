@@ -1,5 +1,7 @@
 package bardatamanager;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
@@ -10,6 +12,7 @@ public class BarDataEntry {
 	private BarData barDataEntry;
 	private long evictionTime;
 	private List<MarketDataResponse> marketData = new Vector<MarketDataResponse>(10);
+	private boolean clean = true;
 	public BarData getBarDataEntry() {
 		return barDataEntry;
 	}
@@ -39,7 +42,22 @@ public class BarDataEntry {
 	}
 	
 	public void addMarketDataEntry(MarketDataResponse marketDataResponse){
-		marketData.add(marketDataResponse);
+		if(clean){
+			clean = false;
+			MarketDataResponse initialEntry = new MarketDataResponse();
+			initialEntry.setInstrumentId(marketDataResponse.getInstrumentId());
+			if(marketDataResponse.getMillisecConversionTime() % evictionTime != 0){
+				initialEntry.setMillisecConversionTime(marketDataResponse.getMillisecConversionTime() + (evictionTime - marketDataResponse.getMillisecConversionTime() % evictionTime));
+			}
+			marketData.add(initialEntry);
+		}
+		else if(marketData.size() == 0){
+			marketDataResponse.setMillisecConversionTime((long) (marketDataResponse.getMillisecConversionTime() - marketDataResponse.getMillisecConversionTime() % evictionTime));
+			marketData.add(marketDataResponse);
+		}
+		else if(marketData.get(0).getMillisecConversionTime() <= marketDataResponse.getMillisecConversionTime()){
+			marketData.add(marketDataResponse);
+		}
 	}
 	
 	public MarketDataResponse removeMarketData(int index){
@@ -68,5 +86,5 @@ public class BarDataEntry {
 		return answer;
 	}
 	
-	
+
 }

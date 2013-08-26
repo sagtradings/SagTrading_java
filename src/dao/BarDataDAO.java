@@ -34,6 +34,18 @@ public class BarDataDAO {
         // commit the transaction
         tx.commit();
     }
+    
+    public List<BarData> getAllBarDataByDateRange(Date startDate, Date endDate, String instrumentId){
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd KK:mm:ss");
+        String startDateStr = df.format(startDate);
+        String endDateStr = df.format(endDate);
+        Session session = SessionUtil.sessionFactory.getCurrentSession();
+        Transaction tx = session.beginTransaction();
+        Query query = session.createQuery("From BarData b where b.day >= '" + startDateStr + "' and b.day <='"+endDateStr +"' and b.instrumentId = '" + instrumentId+"' order by b.day DESC");
+        List<BarData> members = (List<BarData>) query.list();
+        tx.commit();
+        return members;
+    }
 
     public List<BarData> getAllBarData() {
         String hqlQuery = "FROM BarData";
@@ -62,6 +74,8 @@ public class BarDataDAO {
         tx.commit();
         return member;
     }
+    
+    
 
     public BarData getHighestHighBarData(String instrumentId, Date startDate, int numberOfPreviousRecord){
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd KK:mm:ss");

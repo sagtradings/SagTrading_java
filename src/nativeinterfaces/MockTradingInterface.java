@@ -35,10 +35,10 @@ public class MockTradingInterface extends TradingNativeInterface {
 				mockTradeInsert.setOrderRef(tradeRequest.getOrderRef());
 				mockTradeInsert.setPrice(response.getLastPrice());
 				mockTradeInsert.setUserID(tradeRequest.getUserID());
-				if(tradeRequest.getLimitPrice() >= response.getLastPrice() && "0".equals(tradeRequest.getDirection())){
+				if(tradeRequest.getLimitPrice() > response.getLastPrice() && "0".equals(tradeRequest.getDirection())){
 					confirmedTrades.add(mockTradeInsert);
 				}
-				else if(tradeRequest.getLimitPrice() <= response.getLastPrice() && "1".equals(tradeRequest.getDirection())){
+				else if(tradeRequest.getLimitPrice() < response.getLastPrice() && "1".equals(tradeRequest.getDirection())){
 					confirmedTrades.add(mockTradeInsert);
 				}
 				else{

@@ -21,7 +21,7 @@ public class TestDao {
 		
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd KK:mm:ss");
 		try {
-			BarData answer = selector.getHighestBarData("IF1309", formatter.parse("2013-08-07 11:29:03"), 3);
+			BarData answer = selector.getLowestBarData("IF1309", formatter.parse("2013-08-07 11:28:43"), 3);
 			System.out.println(answer);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block

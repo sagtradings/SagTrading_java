@@ -41,7 +41,7 @@ public class BarDataManager {
 			evictionDate.setTime(mdResponse.getMillisecConversionTime());
 			evictionAnswer.setTimestamp(formatter.format(evictionDate));
 			Date day = new Date();
-			day.setTime(mdResponse.getMillisecConversionTime());
+			day.setTime(mdResponse.getMillisecConversionTime() - mdResponse.getMillisecConversionTime() % entry.getEvictionTime());
 			evictionAnswer.setDay(day);
 			entry.reset();
 		}
@@ -58,5 +58,47 @@ public class BarDataManager {
 		entry.addMarketDataEntry(mdResponse);
 		return evictionAnswer;
 		
+	}
+	
+	public static void main(String[] args){
+		Calendar cal1 = Calendar.getInstance();
+		Calendar cal2 = Calendar.getInstance();
+		Date date1 = cal1.getTime();
+		Date date2 = cal2.getTime();
+		
+		cal1.set(Calendar.YEAR, 2013);
+		cal1.set(Calendar.MONTH, Calendar.JANUARY);
+		cal1.set(Calendar.DATE, 1);
+		cal1.set(Calendar.HOUR_OF_DAY, 0);
+		cal1.set(Calendar.SECOND, 0);
+		cal1.set(Calendar.MINUTE, 0);
+		cal1.set(Calendar.MILLISECOND, 0);
+		
+		cal2.set(Calendar.YEAR, 2013);
+		cal2.set(Calendar.MONTH, Calendar.JANUARY);
+		cal2.set(Calendar.DATE, 1);
+		cal2.set(Calendar.HOUR_OF_DAY, 0);
+		cal2.set(Calendar.SECOND, 11);
+		cal2.set(Calendar.MINUTE, 0);
+		cal2.set(Calendar.MILLISECOND, 0);
+		
+		BarDataManager manager = new BarDataManager();
+		MarketDataResponse mdResponse1 = new MarketDataResponse();
+		mdResponse1.setInstrumentId("IF1309");
+		mdResponse1.setMillisecConversionTime(cal1.getTimeInMillis());
+		
+		MarketDataResponse mdResponse2 = new MarketDataResponse();
+		mdResponse2.setMillisecConversionTime(cal2.getTimeInMillis());
+		mdResponse2.setInstrumentId("IF1309");
+		
+		try {
+			manager.initializeEntry("IF1309", 10000);
+			manager.sendMarketData(mdResponse1);
+			BarData barData = manager.sendMarketData(mdResponse2);
+			System.out.println(barData);
+		} catch (EntryNotInitializedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
