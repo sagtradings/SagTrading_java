@@ -46,6 +46,7 @@ public class BarDataEntry {
 			clean = false;
 			MarketDataResponse initialEntry = new MarketDataResponse();
 			initialEntry.setInstrumentId(marketDataResponse.getInstrumentId());
+			initialEntry.setLastPrice(marketDataResponse.getLastPrice());
 			if(marketDataResponse.getMillisecConversionTime() % evictionTime != 0){
 				initialEntry.setMillisecConversionTime(marketDataResponse.getMillisecConversionTime() + (evictionTime - marketDataResponse.getMillisecConversionTime() % evictionTime));
 			}

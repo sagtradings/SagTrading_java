@@ -167,7 +167,7 @@ public class EventMatlabIntegrator {
 		instrumentOfInterest = instrument;
 		Date currentDate = Calendar.getInstance().getTime();
 		Calendar endCalendar = Calendar.getInstance();
-		endCalendar.add(Calendar.DATE, -15);
+		endCalendar.add(Calendar.DATE, -100);
 		Date startDate = endCalendar.getTime();
 		List<BarData> previousBars = barDao.getAllBarDataByDateRange(startDate, currentDate, instrument);
 		BarDataComposer composer = new BarDataComposer();

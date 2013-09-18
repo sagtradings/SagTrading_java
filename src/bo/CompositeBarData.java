@@ -13,7 +13,7 @@ public class CompositeBarData extends BarData {
 	public double getHigh() {
 		double highest = Double.MIN_VALUE;
 		for(int i = 0, n = innerBarData.size(); i < n; i++){
-			if(highest > innerBarData.get(i).getHigh()){
+			if(highest < innerBarData.get(i).getHigh()){
 				highest = innerBarData.get(i).getHigh();
 			}
 		}
@@ -23,7 +23,7 @@ public class CompositeBarData extends BarData {
 	public double getLow() {
 		double lowest = Double.MAX_VALUE;
 		for(int i = 0, n = innerBarData.size(); i < n; i++){
-			if(lowest < innerBarData.get(i).getLow()){
+			if(lowest > innerBarData.get(i).getLow()){
 				lowest = innerBarData.get(i).getLow();
 			}
 		}

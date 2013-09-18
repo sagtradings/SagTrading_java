@@ -1,4 +1,5 @@
 package main;
+
 import bardatamanager.TimeIntervalNotDivisibleByTenException;
 import ctpapiinterface.EventMatlabIntegrator;
 
@@ -12,8 +13,8 @@ import ctpapiinterface.EventMatlabIntegrator;
 			integrator.requestLogin("1013", "123321", "00000008");
 			integrator.subscribeMarketData("IF1309");
 			try {
-				integrator.subscribeBarData("IF1309", 10000);
-				integrator.getLowest("open", 4);
+				integrator.subscribeBarData("IF1309", 20000);
+				
 			} catch (TimeIntervalNotDivisibleByTenException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -21,6 +22,7 @@ import ctpapiinterface.EventMatlabIntegrator;
 			while(true){
 				
 				try {
+					System.out.println(integrator.getLowest("open", 4));
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block

@@ -13,6 +13,7 @@
         <property name="low" column="LOW"/>
         <property name="high" column="HIGH"/>
         <property name="close" column="CLOSE"/>
+        <property name="open" column="OPEN"/>
         <property name="upVolume" column="UPVOLUME"/>
         <property name="instrumentId" column="INSTRUMENTID"/>
         <property name="day" column="DAY"/>
